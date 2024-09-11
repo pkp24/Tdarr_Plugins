@@ -62,10 +62,9 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
   }
 
   return {
-    outputFileObj: inputFileObj,
+    outputFileObj: args.inputFileObj,
     outputNumber: 1,
     variables: args.variables,
-    ffmpegCommand: response,
   };
 };
 
