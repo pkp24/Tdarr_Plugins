@@ -25,8 +25,8 @@ const details = (): IpluginDetails => ({
   ],
   outputs: [
     {
-      number: 1,
-      name: 'Encoding applied',
+      number: '1',
+      tooltip: 'Encoding applied',
     },
   ],
 });

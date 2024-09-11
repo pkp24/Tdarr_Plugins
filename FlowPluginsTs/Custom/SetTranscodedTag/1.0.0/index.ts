@@ -18,8 +18,8 @@ const details = (): IpluginDetails => ({
   inputs: [],
   outputs: [
     {
-      number: 1,
-      name: 'Transcoded tag set',
+      number: '1',
+      tooltip: 'Transcoded tag set',
     },
   ],
 });

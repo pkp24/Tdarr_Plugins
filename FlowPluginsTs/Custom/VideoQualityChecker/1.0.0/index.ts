@@ -29,12 +29,12 @@ const details = (): IpluginDetails => ({
   ],
   outputs: [
     {
-      number: 1,
-      name: 'High quality',
+      number: '1',
+      tooltip: 'High quality',
     },
     {
-      number: 2,
-      name: 'Lower quality',
+      number: '2',
+      tooltip: 'Lower quality',
     },
   ],
 });
@@ -55,7 +55,7 @@ const calculateBitrateThreshold = (width: number, height: number, fps: number, q
 
   // Adjust for frame rate
   const fpsAdjustment = fps / 30;
-  
+
   // Apply quality factor and FPS adjustment
   return Math.round(baseBitrate * qualityFactor * fpsAdjustment);
 };
