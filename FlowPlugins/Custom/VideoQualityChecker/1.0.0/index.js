@@ -61,12 +61,12 @@ var details = function () { return ({
     ],
     outputs: [
         {
-            number: 1,
-            name: 'High quality',
+            number: '1',
+            tooltip: 'High quality',
         },
         {
-            number: 2,
-            name: 'Lower quality',
+            number: '2',
+            tooltip: 'Lower quality',
         },
     ],
 }); };

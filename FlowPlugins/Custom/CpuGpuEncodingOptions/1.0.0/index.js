@@ -57,8 +57,8 @@ var details = function () { return ({
     ],
     outputs: [
         {
-            number: 1,
-            name: 'Encoding applied',
+            number: '1',
+            tooltip: 'Encoding applied',
         },
     ],
 }); };
