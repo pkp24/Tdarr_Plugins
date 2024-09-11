@@ -23,6 +23,12 @@ const details = (): IpluginDetails => ({
       tooltip: 'Choose between NVIDIA GPU or CPU encoding',
     },
   ],
+  outputs: [
+    {
+      number: 1,
+      name: 'Encoding applied',
+    },
+  ],
 });
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

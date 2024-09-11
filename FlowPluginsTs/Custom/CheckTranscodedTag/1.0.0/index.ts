@@ -16,6 +16,16 @@ const details = (): IpluginDetails => ({
   pType: '',
   requiresVersion: '2.00.00',
   inputs: [],
+  outputs: [
+    {
+      number: 1,
+      name: 'Has transcoded tag',
+    },
+    {
+      number: 2,
+      name: 'Does not have transcoded tag',
+    },
+  ],
 });
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

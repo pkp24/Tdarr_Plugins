@@ -27,6 +27,16 @@ const details = (): IpluginDetails => ({
       tooltip: 'FPS threshold (e.g., 30)',
     },
   ],
+  outputs: [
+    {
+      number: 1,
+      name: 'High quality',
+    },
+    {
+      number: 2,
+      name: 'Lower quality',
+    },
+  ],
 });
 
 const calculateBitrateThreshold = (width: number, height: number, fps: number, qualityFactor: number): number => {
