@@ -26,27 +26,22 @@ const details = (): IpluginDetails => ({
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const lib = require('../../../methods/lib')();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { inputs, inputFileObj, otherArguments } = args;
+  const { inputFileObj } = args;
 
   let response = {
     processFile: false,
     preset: '',
-    container: '.mp4',
     handBrakeMode: false,
     FFmpegMode: true,
     reQueueAfter: false,
     infoLog: '',
   };
 
+  // Ensure metadata and tags exist
+  inputFileObj.meta = inputFileObj.meta || {};
+  inputFileObj.meta.Tags = inputFileObj.meta.Tags || {};
+
   // Set the transcoded tag
-  if (!inputFileObj.meta) {
-    inputFileObj.meta = {};
-  }
-  if (!inputFileObj.meta.Tags) {
-    inputFileObj.meta.Tags = {};
-  }
   inputFileObj.meta.Tags.transcoded = 'true';
 
   response.infoLog += '☑ Set "transcoded=true" tag on the file\n';

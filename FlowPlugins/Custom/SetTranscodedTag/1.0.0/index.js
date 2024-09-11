@@ -58,26 +58,21 @@ var details = function () { return ({
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var lib, inputs, inputFileObj, otherArguments, response;
+    var inputFileObj, response;
     return __generator(this, function (_a) {
-        lib = require('../../../methods/lib')();
-        inputs = args.inputs, inputFileObj = args.inputFileObj, otherArguments = args.otherArguments;
+        inputFileObj = args.inputFileObj;
         response = {
             processFile: false,
             preset: '',
-            container: '.mp4',
             handBrakeMode: false,
             FFmpegMode: true,
             reQueueAfter: false,
             infoLog: '',
         };
+        // Ensure metadata and tags exist
+        inputFileObj.meta = inputFileObj.meta || {};
+        inputFileObj.meta.Tags = inputFileObj.meta.Tags || {};
         // Set the transcoded tag
-        if (!inputFileObj.meta) {
-            inputFileObj.meta = {};
-        }
-        if (!inputFileObj.meta.Tags) {
-            inputFileObj.meta.Tags = {};
-        }
         inputFileObj.meta.Tags.transcoded = 'true';
         response.infoLog += '☑ Set "transcoded=true" tag on the file\n';
         return [2 /*return*/, {

@@ -62,25 +62,24 @@ var details = function () { return ({
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var lib, inputs, inputFileObj, otherArguments, response, hasTranscodedTag;
+    var inputs, inputFileObj, otherArguments, response, metadata, hasTranscodedTag;
     var _a, _b;
     return __generator(this, function (_c) {
-        lib = require('../../../methods/lib')();
         inputs = args.inputs, inputFileObj = args.inputFileObj, otherArguments = args.otherArguments;
         response = {
             processFile: false,
             preset: '',
-            container: '.mp4',
             handBrakeMode: false,
             FFmpegMode: true,
             reQueueAfter: false,
             infoLog: '',
         };
-        hasTranscodedTag = ((_b = (_a = inputFileObj.meta) === null || _a === void 0 ? void 0 : _a.Tags) === null || _b === void 0 ? void 0 : _b.transcoded) === 'true';
+        metadata = inputFileObj.ffProbeData || {};
+        hasTranscodedTag = ((_b = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.format) === null || _a === void 0 ? void 0 : _a.tags) === null || _b === void 0 ? void 0 : _b.transcoded) === 'true';
         if (hasTranscodedTag) {
             response.infoLog += '☑ File has the "transcoded=true" tag\n';
             return [2 /*return*/, {
-                    outputFileObj: args.inputFileObj,
+                    outputFileObj: inputFileObj,
                     outputNumber: 1, // Has transcoded tag
                     variables: args.variables,
                 }];
@@ -88,7 +87,7 @@ var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function
         else {
             response.infoLog += '☒ File does not have the "transcoded=true" tag\n';
             return [2 /*return*/, {
-                    outputFileObj: args.inputFileObj,
+                    outputFileObj: inputFileObj,
                     outputNumber: 2, // Does not have transcoded tag
                     variables: args.variables,
                 }];

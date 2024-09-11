@@ -52,12 +52,7 @@ var details = function () { return ({
             name: 'qualityFactor',
             type: 'text',
             tooltip: 'Quality factor (0.5 to 2.0, where 1.0 is standard quality)',
-        },
-        {
-            name: 'fpsThreshold',
-            type: 'text',
-            tooltip: 'FPS threshold (e.g., 30)',
-        },
+        }
     ],
     outputs: [
         {
@@ -71,7 +66,7 @@ var details = function () { return ({
     ],
 }); };
 exports.details = details;
-var calculateBitrateThreshold = function (width, height, fps, qualityFactor) {
+var calculateBitrateThreshold = function (width, height, fps, qualityFactor, codec) {
     var pixelCount = width * height;
     var baseBitrate;
     if (pixelCount <= 921600) { // 1280x720 or lower
@@ -86,29 +81,28 @@ var calculateBitrateThreshold = function (width, height, fps, qualityFactor) {
     else {
         baseBitrate = 30000000; // 30 Mbps for anything higher
     }
+    // Adjust for codec efficiency: H.265 needs ~50% less bitrate than H.264 for the same quality
+    var codecAdjustment = codec === 'hevc' || codec === 'h265' ? 0.5 : 1.0;
     // Adjust for frame rate
     var fpsAdjustment = fps / 30;
-    // Apply quality factor and FPS adjustment
-    return Math.round(baseBitrate * qualityFactor * fpsAdjustment);
+    // Apply quality factor, FPS adjustment, and codec adjustment
+    return Math.round(baseBitrate * qualityFactor * fpsAdjustment * codecAdjustment);
 };
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var lib, inputs, inputFileObj, otherArguments, response, qualityFactor, fpsThreshold, videoStream, bitrate, fps, width, height, bitrateThreshold, isHighQuality;
-    var _a;
-    return __generator(this, function (_b) {
-        lib = require('../../../methods/lib')();
-        inputs = args.inputs, inputFileObj = args.inputFileObj, otherArguments = args.otherArguments;
+    var inputs, inputFileObj, response, qualityFactor, videoStream, bitrate, fps, width, height, codec, bitrateThreshold, isHighQuality;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        inputs = args.inputs, inputFileObj = args.inputFileObj;
         response = {
             processFile: false,
             preset: '',
-            container: '.mp4',
             handBrakeMode: false,
             FFmpegMode: true,
             reQueueAfter: false,
             infoLog: '',
         };
         qualityFactor = Math.max(0.5, Math.min(2.0, parseFloat(inputs.qualityFactor)));
-        fpsThreshold = parseFloat(inputs.fpsThreshold);
         videoStream = inputFileObj.ffProbeData.streams.find(function (stream) { return stream.codec_type === 'video'; });
         if (!videoStream) {
             throw new Error('No video stream found in the input file');
@@ -117,10 +111,11 @@ var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function
         fps = parseFloat(((_a = videoStream.r_frame_rate) === null || _a === void 0 ? void 0 : _a.split('/')[0]) || '0');
         width = parseInt(videoStream.width || '0');
         height = parseInt(videoStream.height || '0');
-        bitrateThreshold = calculateBitrateThreshold(width, height, fps, qualityFactor);
-        isHighQuality = bitrate >= bitrateThreshold && fps >= fpsThreshold;
+        codec = ((_b = videoStream.codec_name) === null || _b === void 0 ? void 0 : _b.toLowerCase()) || 'h264';
+        bitrateThreshold = calculateBitrateThreshold(width, height, fps, qualityFactor, codec);
+        isHighQuality = bitrate >= bitrateThreshold;
         if (isHighQuality) {
-            response.infoLog += "\u2611 Video meets high quality criteria (Bitrate: ".concat(bitrate, " >= ").concat(bitrateThreshold, ", FPS: ").concat(fps, " >= ").concat(fpsThreshold, ")\n");
+            response.infoLog += "\u2611 Video meets high quality criteria (Bitrate: ".concat(bitrate, " >= ").concat(bitrateThreshold, ", FPS: ").concat(fps, ", Codec: ").concat(codec, ")\n");
             return [2 /*return*/, {
                     outputFileObj: args.inputFileObj,
                     outputNumber: 1, // High quality output
@@ -128,7 +123,7 @@ var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function
                 }];
         }
         else {
-            response.infoLog += "\u2612 Video does not meet high quality criteria (Bitrate: ".concat(bitrate, " < ").concat(bitrateThreshold, " or FPS: ").concat(fps, " < ").concat(fpsThreshold, ")\n");
+            response.infoLog += "\u2612 Video does not meet high quality criteria (Bitrate: ".concat(bitrate, " < ").concat(bitrateThreshold, ", Codec: ").concat(codec, ")\n");
             return [2 /*return*/, {
                     outputFileObj: args.inputFileObj,
                     outputNumber: 2, // Lower quality output

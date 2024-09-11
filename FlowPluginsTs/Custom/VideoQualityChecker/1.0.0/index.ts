@@ -20,12 +20,7 @@ const details = (): IpluginDetails => ({
       name: 'qualityFactor',
       type: 'text',
       tooltip: 'Quality factor (0.5 to 2.0, where 1.0 is standard quality)',
-    },
-    {
-      name: 'fpsThreshold',
-      type: 'text',
-      tooltip: 'FPS threshold (e.g., 30)',
-    },
+    }
   ],
   outputs: [
     {
@@ -39,7 +34,7 @@ const details = (): IpluginDetails => ({
   ],
 });
 
-const calculateBitrateThreshold = (width: number, height: number, fps: number, qualityFactor: number): number => {
+const calculateBitrateThreshold = (width: number, height: number, fps: number, qualityFactor: number, codec: string): number => {
   const pixelCount = width * height;
   let baseBitrate: number;
 
@@ -53,23 +48,24 @@ const calculateBitrateThreshold = (width: number, height: number, fps: number, q
     baseBitrate = 30000000; // 30 Mbps for anything higher
   }
 
+  // Adjust for codec efficiency: H.265 needs ~50% less bitrate than H.264 for the same quality
+  const codecAdjustment = codec === 'hevc' || codec === 'h265' ? 0.5 : 1.0;
+
   // Adjust for frame rate
   const fpsAdjustment = fps / 30;
 
-  // Apply quality factor and FPS adjustment
-  return Math.round(baseBitrate * qualityFactor * fpsAdjustment);
+  // Apply quality factor, FPS adjustment, and codec adjustment
+  return Math.round(baseBitrate * qualityFactor * fpsAdjustment * codecAdjustment);
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const lib = require('../../../methods/lib')();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { inputs, inputFileObj, otherArguments } = args;
+  const { inputs, inputFileObj } = args;
 
   let response = {
     processFile: false,
     preset: '',
-    container: '.mp4',
     handBrakeMode: false,
     FFmpegMode: true,
     reQueueAfter: false,
@@ -77,7 +73,6 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
   };
 
   const qualityFactor = Math.max(0.5, Math.min(2.0, parseFloat(inputs.qualityFactor as string)));
-  const fpsThreshold = parseFloat(inputs.fpsThreshold as string);
 
   const videoStream = inputFileObj.ffProbeData.streams.find((stream: any) => stream.codec_type === 'video');
 
@@ -89,20 +84,21 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
   const fps = parseFloat(videoStream.r_frame_rate?.split('/')[0] || '0');
   const width = parseInt(videoStream.width || '0');
   const height = parseInt(videoStream.height || '0');
+  const codec = videoStream.codec_name?.toLowerCase() || 'h264'; // Default to H.264 if codec is unknown
 
-  const bitrateThreshold = calculateBitrateThreshold(width, height, fps, qualityFactor);
+  const bitrateThreshold = calculateBitrateThreshold(width, height, fps, qualityFactor, codec);
 
-  const isHighQuality = bitrate >= bitrateThreshold && fps >= fpsThreshold;
+  const isHighQuality = bitrate >= bitrateThreshold;
 
   if (isHighQuality) {
-    response.infoLog += `☑ Video meets high quality criteria (Bitrate: ${bitrate} >= ${bitrateThreshold}, FPS: ${fps} >= ${fpsThreshold})\n`;
+    response.infoLog += `☑ Video meets high quality criteria (Bitrate: ${bitrate} >= ${bitrateThreshold}, FPS: ${fps}, Codec: ${codec})\n`;
     return {
       outputFileObj: args.inputFileObj,
       outputNumber: 1, // High quality output
       variables: args.variables,
     };
   } else {
-    response.infoLog += `☒ Video does not meet high quality criteria (Bitrate: ${bitrate} < ${bitrateThreshold} or FPS: ${fps} < ${fpsThreshold})\n`;
+    response.infoLog += `☒ Video does not meet high quality criteria (Bitrate: ${bitrate} < ${bitrateThreshold}, Codec: ${codec})\n`;
     return {
       outputFileObj: args.inputFileObj,
       outputNumber: 2, // Lower quality output

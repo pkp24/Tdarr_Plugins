@@ -51,7 +51,11 @@ var details = function () { return ({
         {
             name: 'encodingType',
             type: 'dropdown',
-            options: ['nvidia', 'cpu'],
+            defaultValue: 'nvidia',
+            inputUI: {
+                type: 'dropdown',
+                options: ['nvidia', 'cpu'],
+            },
             tooltip: 'Choose between NVIDIA GPU or CPU encoding',
         },
     ],
@@ -65,20 +69,19 @@ var details = function () { return ({
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var lib, inputs, inputFileObj, otherArguments, response, encodingType, inputContainer;
+    var inputs, inputFileObj, otherArguments, response, encodingType, inputContainer;
     return __generator(this, function (_a) {
-        lib = require('../../../methods/lib')();
         inputs = args.inputs, inputFileObj = args.inputFileObj, otherArguments = args.otherArguments;
         response = {
             processFile: false,
             preset: '',
-            container: '.mp4',
             handBrakeMode: false,
             FFmpegMode: true,
             reQueueAfter: false,
             infoLog: '',
         };
         encodingType = inputs.encodingType;
+        // Apply encoding settings based on selected type
         if (encodingType === 'nvidia') {
             response.infoLog += '☑ Using NVIDIA GPU encoding\n';
             response.preset = '-c:v hevc_nvenc -cq 25 -preset p7';
@@ -90,10 +93,16 @@ var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function
         else {
             throw new Error('Invalid encoding type selected');
         }
+        // Preserve audio and subtitle streams
         response.preset += ' -c:a copy -c:s copy';
         inputContainer = inputFileObj.container.toLowerCase();
         if (inputContainer === 'mp4' || inputContainer === 'mkv') {
             response.container = ".".concat(inputContainer);
+            response.infoLog += "\u2611 Using input container: ".concat(inputContainer, "\n");
+        }
+        else {
+            response.container = '.mkv'; // Fallback to a widely supported container
+            response.infoLog += '☑ Unsupported container, falling back to .mkv\n';
         }
         return [2 /*return*/, {
                 outputFileObj: args.inputFileObj,
