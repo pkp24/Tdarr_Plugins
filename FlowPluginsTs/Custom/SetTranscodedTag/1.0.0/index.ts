@@ -45,7 +45,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
 
   response.infoLog += '☑ Set "transcoded=true" tag on the file\n';
 
-  return {
+  return [{
     outputFileObj: {
       _id: inputFileObj._id,
       meta: inputFileObj.meta,
@@ -55,7 +55,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
       ...args.variables,
       ffmpegCommand: response,
     },
-  };
+  }];
 };
 
 export { details, plugin };

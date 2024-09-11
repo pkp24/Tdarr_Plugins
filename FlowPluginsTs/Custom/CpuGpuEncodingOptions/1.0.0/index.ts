@@ -61,7 +61,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
     response.container = `.${inputContainer}`;
   }
 
-  return {
+  return [{
     outputFileObj: {
       _id: inputFileObj._id,
     },
@@ -70,7 +70,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
       ...args.variables,
       ffmpegCommand: response,
     },
-  };
+  }];
 };
 
 export { details, plugin };
