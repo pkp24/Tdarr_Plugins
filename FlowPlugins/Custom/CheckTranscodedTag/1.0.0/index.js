@@ -50,12 +50,12 @@ var details = function () { return ({
     inputs: [],
     outputs: [
         {
-            number: 1,
-            name: 'Has transcoded tag',
+            number: '1',
+            tooltip: 'Has transcoded tag',
         },
         {
-            number: 2,
-            name: 'Does not have transcoded tag',
+            number: '2',
+            tooltip: 'Does not have transcoded tag',
         },
     ],
 }); };
