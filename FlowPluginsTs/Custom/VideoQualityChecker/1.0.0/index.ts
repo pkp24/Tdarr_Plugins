@@ -86,7 +86,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
 
   if (isHighQuality) {
     response.infoLog += `☑ Video meets high quality criteria (Bitrate: ${bitrate} >= ${bitrateThreshold}, FPS: ${fps} >= ${fpsThreshold})\n`;
-    return [{
+    return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
@@ -95,10 +95,10 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
         ...args.variables,
         ffmpegCommand: response,
       },
-    }];
+    };
   } else {
     response.infoLog += `☒ Video does not meet high quality criteria (Bitrate: ${bitrate} < ${bitrateThreshold} or FPS: ${fps} < ${fpsThreshold})\n`;
-    return [{
+    return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
@@ -107,7 +107,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
         ...args.variables,
         ffmpegCommand: response,
       },
-    }];
+    };
   }
 };
 

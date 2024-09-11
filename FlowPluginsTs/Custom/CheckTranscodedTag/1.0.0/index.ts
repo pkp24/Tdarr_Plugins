@@ -38,7 +38,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
 
   if (hasTranscodedTag) {
     response.infoLog += '☑ File has the "transcoded=true" tag\n';
-    return [{
+    return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
@@ -47,10 +47,10 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
         ...args.variables,
         ffmpegCommand: response,
       },
-    }];
+    };
   } else {
     response.infoLog += '☒ File does not have the "transcoded=true" tag\n';
-    return [{
+    return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
@@ -59,7 +59,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
         ...args.variables,
         ffmpegCommand: response,
       },
-    }];
+    };
   }
 };
 
