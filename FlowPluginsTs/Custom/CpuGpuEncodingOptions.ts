@@ -3,7 +3,7 @@ import {
   IpluginOutputArgs,
   IpluginDetails,
   IffmpegCommandStream,
-} from '../FlowHelpers/1.0.0/interfaces/interfaces';
+} from '../../../FlowHelpers/1.0.0/interfaces/interfaces';
 
 const details = (): IpluginDetails => ({
   name: 'CPU/GPU Encoding Options',

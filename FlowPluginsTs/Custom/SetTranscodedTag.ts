@@ -2,7 +2,7 @@ import {
   IpluginInputArgs,
   IpluginOutputArgs,
   IpluginDetails,
-} from '../FlowHelpers/1.0.0/interfaces/interfaces';
+} from '../../../FlowHelpers/1.0.0/interfaces/interfaces';
 
 const details = (): IpluginDetails => ({
   name: 'Set Transcoded Tag',
