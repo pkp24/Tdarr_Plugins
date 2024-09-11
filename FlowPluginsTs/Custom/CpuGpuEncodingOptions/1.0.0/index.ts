@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   IpluginInputArgs,
   IpluginOutputArgs,
   IpluginDetails,
-  IffmpegCommandStream,
 } from '../../../FlowHelpers/1.0.0/interfaces/interfaces';
 
 const details = (): IpluginDetails => ({
@@ -25,49 +25,51 @@ const details = (): IpluginDetails => ({
   ],
 });
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const { inputs, jobLog, inputFileObj } = args;
+  const lib = require('../../../methods/lib')();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { inputs, inputFileObj, otherArguments } = args;
+
+  let response = {
+    processFile: false,
+    preset: '',
+    container: '.mp4',
+    handBrakeMode: false,
+    FFmpegMode: true,
+    reQueueAfter: false,
+    infoLog: '',
+  };
 
   const encodingType = inputs.encodingType as string;
-  const videoStream = args.variables.ffmpegCommand.streams.find((stream: IffmpegCommandStream) => stream.codec_type === 'video');
-
-  if (!videoStream) {
-    throw new Error('No video stream found in the input file');
-  }
 
   if (encodingType === 'nvidia') {
-    jobLog('Using NVIDIA GPU encoding');
-    videoStream.codec = 'hevc_nvenc';
-    videoStream.codecArgs = ['-cq', '25', '-preset', 'p7'];
+    response.infoLog += '☑ Using NVIDIA GPU encoding\n';
+    response.preset = '-c:v hevc_nvenc -cq 25 -preset p7';
   } else if (encodingType === 'cpu') {
-    jobLog('Using CPU encoding');
-    videoStream.codec = 'libx265';
-    videoStream.codecArgs = ['-crf', '23', '-preset', 'medium'];
+    response.infoLog += '☑ Using CPU encoding\n';
+    response.preset = '-c:v libx265 -crf 23 -preset medium';
   } else {
     throw new Error('Invalid encoding type selected');
   }
 
-  // Set all other streams to copy
-  args.variables.ffmpegCommand.streams.forEach((stream: IffmpegCommandStream) => {
-    if (stream.codec_type !== 'video') {
-      stream.codec = 'copy';
-    }
-  });
+  response.preset += ' -c:a copy -c:s copy';
 
   // Determine output container
   const inputContainer = inputFileObj.container.toLowerCase();
-  let outputContainer = inputContainer;
-  if (inputContainer !== 'mp4' && inputContainer !== 'mkv') {
-    outputContainer = 'mp4';
+  if (inputContainer === 'mp4' || inputContainer === 'mkv') {
+    response.container = `.${inputContainer}`;
   }
-  args.variables.ffmpegCommand.container = outputContainer;
 
   return {
     outputFileObj: {
       _id: inputFileObj._id,
     },
     outputNumber: 1,
-    variables: args.variables,
+    variables: {
+      ...args.variables,
+      ffmpegCommand: response,
+    },
   };
 };
 

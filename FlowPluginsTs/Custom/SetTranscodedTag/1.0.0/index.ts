@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   IpluginInputArgs,
   IpluginOutputArgs,
@@ -17,8 +18,21 @@ const details = (): IpluginDetails => ({
   inputs: [],
 });
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const { jobLog, inputFileObj } = args;
+  const lib = require('../../../methods/lib')();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { inputs, inputFileObj, otherArguments } = args;
+
+  let response = {
+    processFile: false,
+    preset: '',
+    container: '.mp4',
+    handBrakeMode: false,
+    FFmpegMode: true,
+    reQueueAfter: false,
+    infoLog: '',
+  };
 
   // Set the transcoded tag
   if (!inputFileObj.meta) {
@@ -29,7 +43,7 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
   }
   inputFileObj.meta.Tags.transcoded = 'true';
 
-  jobLog('Set "transcoded=true" tag on the file');
+  response.infoLog += '☑ Set "transcoded=true" tag on the file\n';
 
   return {
     outputFileObj: {
@@ -37,7 +51,10 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
       meta: inputFileObj.meta,
     },
     outputNumber: 1,
-    variables: args.variables,
+    variables: {
+      ...args.variables,
+      ffmpegCommand: response,
+    },
   };
 };
 

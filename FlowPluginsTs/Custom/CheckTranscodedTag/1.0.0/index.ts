@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   IpluginInputArgs,
   IpluginOutputArgs,
@@ -17,28 +18,47 @@ const details = (): IpluginDetails => ({
   inputs: [],
 });
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const { jobLog, inputFileObj } = args;
+  const lib = require('../../../methods/lib')();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { inputs, inputFileObj, otherArguments } = args;
+
+  let response = {
+    processFile: false,
+    preset: '',
+    container: '.mp4',
+    handBrakeMode: false,
+    FFmpegMode: true,
+    reQueueAfter: false,
+    infoLog: '',
+  };
 
   const hasTranscodedTag = inputFileObj.meta?.Tags?.transcoded === 'true';
 
   if (hasTranscodedTag) {
-    jobLog('File has the "transcoded=true" tag');
+    response.infoLog += '☑ File has the "transcoded=true" tag\n';
     return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
       outputNumber: 1, // Has transcoded tag
-      variables: args.variables,
+      variables: {
+        ...args.variables,
+        ffmpegCommand: response,
+      },
     };
   } else {
-    jobLog('File does not have the "transcoded=true" tag');
+    response.infoLog += '☒ File does not have the "transcoded=true" tag\n';
     return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
       outputNumber: 2, // Does not have transcoded tag
-      variables: args.variables,
+      variables: {
+        ...args.variables,
+        ffmpegCommand: response,
+      },
     };
   }
 };

@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   IpluginInputArgs,
   IpluginOutputArgs,
   IpluginDetails,
-  IffmpegCommandStream,
 } from '../../../FlowHelpers/1.0.0/interfaces/interfaces';
 
 const details = (): IpluginDetails => ({
@@ -50,13 +50,26 @@ const calculateBitrateThreshold = (width: number, height: number, fps: number, q
   return Math.round(baseBitrate * qualityFactor * fpsAdjustment);
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
-  const { inputs, jobLog, inputFileObj } = args;
+  const lib = require('../../../methods/lib')();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { inputs, inputFileObj, otherArguments } = args;
+
+  let response = {
+    processFile: false,
+    preset: '',
+    container: '.mp4',
+    handBrakeMode: false,
+    FFmpegMode: true,
+    reQueueAfter: false,
+    infoLog: '',
+  };
 
   const qualityFactor = Math.max(0.5, Math.min(2.0, parseFloat(inputs.qualityFactor as string)));
   const fpsThreshold = parseFloat(inputs.fpsThreshold as string);
 
-  const videoStream = args.variables.ffmpegCommand.streams.find((stream: IffmpegCommandStream) => stream.codec_type === 'video');
+  const videoStream = inputFileObj.ffProbeData.streams.find((stream: any) => stream.codec_type === 'video');
 
   if (!videoStream) {
     throw new Error('No video stream found in the input file');
@@ -72,22 +85,28 @@ const plugin = async (args: IpluginInputArgs): Promise<IpluginOutputArgs> => {
   const isHighQuality = bitrate >= bitrateThreshold && fps >= fpsThreshold;
 
   if (isHighQuality) {
-    jobLog(`Video meets high quality criteria (Bitrate: ${bitrate} >= ${bitrateThreshold}, FPS: ${fps} >= ${fpsThreshold})`);
+    response.infoLog += `☑ Video meets high quality criteria (Bitrate: ${bitrate} >= ${bitrateThreshold}, FPS: ${fps} >= ${fpsThreshold})\n`;
     return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
       outputNumber: 1, // High quality output
-      variables: args.variables,
+      variables: {
+        ...args.variables,
+        ffmpegCommand: response,
+      },
     };
   } else {
-    jobLog(`Video does not meet high quality criteria (Bitrate: ${bitrate} < ${bitrateThreshold} or FPS: ${fps} < ${fpsThreshold})`);
+    response.infoLog += `☒ Video does not meet high quality criteria (Bitrate: ${bitrate} < ${bitrateThreshold} or FPS: ${fps} < ${fpsThreshold})\n`;
     return {
       outputFileObj: {
         _id: inputFileObj._id,
       },
       outputNumber: 2, // Lower quality output
-      variables: args.variables,
+      variables: {
+        ...args.variables,
+        ffmpegCommand: response,
+      },
     };
   }
 };
