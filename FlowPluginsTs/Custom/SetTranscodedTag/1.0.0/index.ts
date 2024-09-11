@@ -13,6 +13,7 @@ const details = (): IpluginDetails => ({
   tags: 'tag,set,transcoded',
   isStartPlugin: false,
   pType: '',
+  requiredTdarrVersion: '2.24.05',
   inputs: [],
 });
 

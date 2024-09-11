@@ -14,6 +14,7 @@ const details = (): IpluginDetails => ({
   tags: 'video,encoder,gpu,cpu',
   isStartPlugin: false,
   pType: '',
+  requiredTdarrVersion: '2.24.05',
   inputs: [
     {
       name: 'encodingType',
