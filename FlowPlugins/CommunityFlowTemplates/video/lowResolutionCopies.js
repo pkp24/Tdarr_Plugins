@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     name: 'Create Low Resolution Video Copies',
     description: 'Create Low Resolution Video Copies',
     tags: '',
@@ -358,5 +358,5 @@ var details = function () { return ({
             id: 'AxR9R10MY',
         },
     ],
-}); };
+});
 exports.details = details;

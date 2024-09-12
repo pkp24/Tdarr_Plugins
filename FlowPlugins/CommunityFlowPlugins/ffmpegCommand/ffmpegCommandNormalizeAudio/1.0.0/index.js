@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
+const flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Normalize Audio',
     description: 'Normalize Audio',
     style: {
@@ -23,11 +23,11 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     (0, flowUtils_1.checkFfmpegCommandInit)(args);

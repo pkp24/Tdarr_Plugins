@@ -2,9 +2,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Tags: Requeue',
-    description: "\nPlace the file back in the staging queue with specific tags.\n\nOnly Nodes/Workers which match the tags will be able to process the file.\n\nThe tags must have one of the following: 'requireCPU', 'requireGPU', or 'requireCPUorGPU'.\n\nThe above tells the server what type of worker is required to process the file.\n\nSubsequent tags must not use the reserved word 'require' in them.\n\nYou can set the 'Node Tags' in the Node options panel.\n\nA worker will only process a file if the Custom Queue Tags are a subset of the Worker/Node Tags\n",
+    description: `
+Place the file back in the staging queue with specific tags.
+
+Only Nodes/Workers which match the tags will be able to process the file.
+
+The tags must have one of the following: 'requireCPU', 'requireGPU', or 'requireCPUorGPU'.
+
+The above tells the server what type of worker is required to process the file.
+
+Subsequent tags must not use the reserved word 'require' in them.
+
+You can set the 'Node Tags' in the Node options panel.
+
+A worker will only process a file if the Custom Queue Tags are a subset of the Worker/Node Tags
+`,
     style: {
         borderColor: 'yellow',
     },
@@ -86,7 +100,15 @@ var details = function () { return ({
                     ],
                 },
             },
-            tooltip: "\nrequireGPU:nvenc,tag1,tag2\nrequireCPUorGPU,tag1,tag2\nrequireCPU,tag1,tag2\nrequireGPU,tag1,tag2,tag3\nrequireGPU,tag1\nrequireGPU,{{{args.userVariables.global.test}}}\nrequireCPUorGPU,tag1,tag2\n      ",
+            tooltip: `
+requireGPU:nvenc,tag1,tag2
+requireCPUorGPU,tag1,tag2
+requireCPU,tag1,tag2
+requireGPU,tag1,tag2,tag3
+requireGPU,tag1
+requireGPU,{{{args.userVariables.global.test}}}
+requireCPUorGPU,tag1,tag2
+      `,
         },
     ],
     outputs: [
@@ -95,15 +117,15 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var basicQueueTags = String(args.inputs.basicQueueTags);
-    var customQueueTags = String(args.inputs.customQueueTags);
+    const basicQueueTags = String(args.inputs.basicQueueTags);
+    const customQueueTags = String(args.inputs.customQueueTags);
     // eslint-disable-next-line no-param-reassign
     args.variables.queueTags = args.inputs.useBasicQueueTags ? basicQueueTags : customQueueTags;
     return {

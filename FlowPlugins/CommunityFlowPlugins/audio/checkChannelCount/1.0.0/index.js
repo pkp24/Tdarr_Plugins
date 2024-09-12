@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check Channel Count',
     description: 'Check streams for specified channel count',
     style: {
@@ -42,21 +42,21 @@ var details = function () { return ({
             tooltip: 'File does not have stream with specified channel count',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
+const plugin = (args) => {
     var _a, _b;
-    var lib = require('../../../../../methods/lib')();
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var channelCount = Number(args.inputs.channelCount);
-    var hasSpecifiedChannelCount = false;
-    args.jobLog("Checking for ".concat(channelCount, " channels"));
+    const channelCount = Number(args.inputs.channelCount);
+    let hasSpecifiedChannelCount = false;
+    args.jobLog(`Checking for ${channelCount} channels`);
     if (Array.isArray((_b = (_a = args === null || args === void 0 ? void 0 : args.inputFileObj) === null || _a === void 0 ? void 0 : _a.ffProbeData) === null || _b === void 0 ? void 0 : _b.streams)) {
-        for (var i = 0; i < args.inputFileObj.ffProbeData.streams.length; i += 1) {
-            var stream = args.inputFileObj.ffProbeData.streams[i];
-            args.jobLog("Stream ".concat(i, " has ").concat(stream.channels, " channels"));
+        for (let i = 0; i < args.inputFileObj.ffProbeData.streams.length; i += 1) {
+            const stream = args.inputFileObj.ffProbeData.streams[i];
+            args.jobLog(`Stream ${i} has ${stream.channels} channels`);
             if (stream.channels === channelCount) {
                 hasSpecifiedChannelCount = true;
             }

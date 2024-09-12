@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     name: 'CPU and GPU Workers with Classic Plugins',
     description: 'An example of how to use CPU and GPU workers in a flow with Classic plugins.',
     tags: '',
@@ -144,5 +144,5 @@ var details = function () { return ({
             id: 'WQDC5fqqR',
         },
     ],
-}); };
+});
 exports.details = details;

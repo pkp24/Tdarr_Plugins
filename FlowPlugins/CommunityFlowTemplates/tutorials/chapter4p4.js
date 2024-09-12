@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     "name": "Chapter 4: Flow Errors Part 4 - Resetting Flow Errors",
     "description": "Chapter 4: Flow Errors Part 4 - Resetting Flow Errors",
     "tags": "",
@@ -177,5 +177,5 @@ var details = function () { return ({
             "id": "YwFpa-_YC"
         }
     ]
-}); };
+});
 exports.details = details;

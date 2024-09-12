@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'On Flow Error',
-    description: "Runs if an error occurs in this specific flow. \n  Won't run if error occurs in after going to a different flow (unless that flow comes back to this one).",
+    description: `Runs if an error occurs in this specific flow. 
+  Won't run if error occurs in after going to a different flow (unless that flow comes back to this one).`,
     style: {
         borderColor: 'red',
     },
@@ -21,11 +22,11 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     return {

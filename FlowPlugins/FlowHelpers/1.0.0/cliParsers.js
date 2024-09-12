@@ -1,22 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editreadyParser = exports.getHandBrakeFps = exports.getFFmpegVar = exports.getFFmpegPercentage = exports.ffmpegParser = exports.handbrakeParser = void 0;
-var handbrakeParser = function (_a) {
-    var str = _a.str, hbPass = _a.hbPass;
+const handbrakeParser = ({ str, hbPass, }) => {
     if (typeof str !== 'string') {
         return 0;
     }
-    var percentage = 0;
-    var numbers = '0123456789';
-    var n = str.indexOf('%');
+    let percentage = 0;
+    const numbers = '0123456789';
+    const n = str.indexOf('%');
     if (str.length >= 6
         && str.indexOf('%') >= 6
         && numbers.includes(str.charAt(n - 5))) {
-        var output = str.substring(n - 6, n + 1);
-        var outputArr = output.split('');
+        let output = str.substring(n - 6, n + 1);
+        const outputArr = output.split('');
         outputArr.splice(outputArr.length - 1, 1);
         output = outputArr.join('');
-        var outputNum = Number(output);
+        const outputNum = Number(output);
         if (outputNum > 0) {
             percentage = outputNum;
             if (hbPass === 1) {
@@ -30,13 +29,12 @@ var handbrakeParser = function (_a) {
     return percentage;
 };
 exports.handbrakeParser = handbrakeParser;
-var getHandBrakeFps = function (_a) {
-    var str = _a.str;
+const getHandBrakeFps = ({ str, }) => {
     try {
         if (typeof str !== 'string' || !(str.includes('(') && str.includes('fps'))) {
             return 0;
         }
-        var out = parseInt(str.split('(')[1].split('fps')[0].trim(), 10);
+        const out = parseInt(str.split('(')[1].split('fps')[0].trim(), 10);
         // eslint-disable-next-line no-restricted-globals
         if (!isNaN(out)) {
             return out;
@@ -49,17 +47,16 @@ var getHandBrakeFps = function (_a) {
 };
 exports.getHandBrakeFps = getHandBrakeFps;
 // frame=  889 fps=106 q=26.0 Lsize=   25526kB time=00:00:35.69 bitrate=5858.3kbits/s speed=4.25x
-var getFFmpegVar = function (_a) {
-    var str = _a.str, variable = _a.variable;
+const getFFmpegVar = ({ str, variable, }) => {
     if (typeof str !== 'string') {
         return '';
     }
-    var idx = str.indexOf(variable);
-    var out = '';
-    var initSpacesEnded = false;
+    const idx = str.indexOf(variable);
+    let out = '';
+    let initSpacesEnded = false;
     if (idx >= 0) {
-        var startIdx = idx + variable.length + 1;
-        for (var i = startIdx; i < str.length; i += 1) {
+        const startIdx = idx + variable.length + 1;
+        for (let i = startIdx; i < str.length; i += 1) {
             if (initSpacesEnded === true && str[i] === ' ') {
                 break;
             }
@@ -74,13 +71,12 @@ var getFFmpegVar = function (_a) {
     return out;
 };
 exports.getFFmpegVar = getFFmpegVar;
-var getFFmpegPercentage = function (_a) {
-    var time = _a.time, f = _a.f, fc = _a.fc, vf = _a.vf, d = _a.d;
-    var frameCount01 = fc;
-    var VideoFrameRate = vf;
-    var Duration = d;
-    var perc = 0;
-    var frame = parseInt(f, 10);
+const getFFmpegPercentage = ({ time, f, fc, vf, d, }) => {
+    let frameCount01 = fc;
+    let VideoFrameRate = vf;
+    let Duration = d;
+    let perc = 0;
+    const frame = parseInt(f, 10);
     frameCount01 = Math.ceil(frameCount01);
     VideoFrameRate = Math.ceil(VideoFrameRate);
     Duration = Math.ceil(Duration);
@@ -98,7 +94,7 @@ var getFFmpegPercentage = function (_a) {
     else if (time > 0 && Duration > 0) {
         perc = ((time / Duration) * 100);
     }
-    var percString = perc.toFixed(2);
+    const percString = perc.toFixed(2);
     // eslint-disable-next-line no-restricted-globals
     if (isNaN(perc)) {
         return 0.00;
@@ -106,34 +102,33 @@ var getFFmpegPercentage = function (_a) {
     return parseFloat(percString);
 };
 exports.getFFmpegPercentage = getFFmpegPercentage;
-var ffmpegParser = function (_a) {
-    var str = _a.str, frameCount = _a.frameCount, videoFrameRate = _a.videoFrameRate, ffprobeDuration = _a.ffprobeDuration, metaDuration = _a.metaDuration;
+const ffmpegParser = ({ str, frameCount, videoFrameRate, ffprobeDuration, metaDuration, }) => {
     if (typeof str !== 'string') {
         return 0;
     }
-    var percentage = 0;
+    let percentage = 0;
     if (str.length >= 6) {
-        var frame = getFFmpegVar({
-            str: str,
+        const frame = getFFmpegVar({
+            str,
             variable: 'frame',
         });
-        var time = 0;
+        let time = 0;
         // get time
-        var timeStr = getFFmpegVar({
-            str: str,
+        const timeStr = getFFmpegVar({
+            str,
             variable: 'time',
         });
         if (timeStr) {
-            var timeArr = timeStr.split(':');
+            const timeArr = timeStr.split(':');
             if (timeArr.length === 3) {
-                var hours = parseInt(timeArr[0], 10);
-                var minutes = parseInt(timeArr[1], 10);
-                var seconds = parseInt(timeArr[2], 10);
+                const hours = parseInt(timeArr[0], 10);
+                const minutes = parseInt(timeArr[1], 10);
+                const seconds = parseInt(timeArr[2], 10);
                 time = (hours * 3600) + (minutes * 60) + seconds;
             }
         }
-        var frameRate = videoFrameRate || 0;
-        var duration = 0;
+        const frameRate = videoFrameRate || 0;
+        let duration = 0;
         if (ffprobeDuration
             && parseFloat(ffprobeDuration) > 0) {
             duration = parseFloat(ffprobeDuration);
@@ -141,14 +136,14 @@ var ffmpegParser = function (_a) {
         else if (metaDuration) {
             duration = metaDuration;
         }
-        var per = getFFmpegPercentage({
-            time: time,
+        const per = getFFmpegPercentage({
+            time,
             f: frame,
             fc: frameCount,
             vf: frameRate,
             d: duration,
         });
-        var outputNum = Number(per);
+        const outputNum = Number(per);
         if (outputNum > 0) {
             percentage = outputNum;
         }
@@ -156,20 +151,19 @@ var ffmpegParser = function (_a) {
     return percentage;
 };
 exports.ffmpegParser = ffmpegParser;
-var editreadyParser = function (_a) {
-    var str = _a.str;
+const editreadyParser = ({ str }) => {
     if (typeof str !== 'string') {
         return 0;
     }
-    var percentage = 0;
+    let percentage = 0;
     // const ex = 'STATUS: {"progress": "0.0000000"}';
     if (str.includes('STATUS:')) {
-        var parts = str.split('STATUS:');
+        const parts = str.split('STATUS:');
         if (parts[1]) {
             try {
-                var json = JSON.parse(parts[1]);
-                var progress = parseFloat(json.progress);
-                var percStr = (progress * 100).toFixed(2);
+                const json = JSON.parse(parts[1]);
+                const progress = parseFloat(json.progress);
+                const percStr = (progress * 100).toFixed(2);
                 percentage = parseFloat(percStr);
             }
             catch (err) {

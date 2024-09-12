@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     "name": "Chapter 6: The Review System",
     "description": "Chapter 6: The Review System",
     "tags": "",
@@ -263,5 +263,5 @@ var details = function () { return ({
             "id": "8wXVHwiDC"
         }
     ]
-}); };
+});
 exports.details = details;

@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
-var flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Set Video Bitrate',
     description: 'Set Video Bitrate',
     style: {
@@ -109,43 +109,43 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     (0, flowUtils_1.checkFfmpegCommandInit)(args);
-    var useInputBitrate = args.inputs.useInputBitrate;
-    var targetBitratePercent = String(args.inputs.targetBitratePercent);
-    var fallbackBitrate = String(args.inputs.fallbackBitrate);
-    var bitrate = String(args.inputs.bitrate);
-    args.variables.ffmpegCommand.streams.forEach(function (stream) {
+    const { useInputBitrate } = args.inputs;
+    const targetBitratePercent = String(args.inputs.targetBitratePercent);
+    const fallbackBitrate = String(args.inputs.fallbackBitrate);
+    const bitrate = String(args.inputs.bitrate);
+    args.variables.ffmpegCommand.streams.forEach((stream) => {
         var _a, _b, _c, _d;
         if (stream.codec_type === 'video') {
-            var ffType = (0, fileUtils_1.getFfType)(stream.codec_type);
+            const ffType = (0, fileUtils_1.getFfType)(stream.codec_type);
             if (useInputBitrate) {
                 args.jobLog('Attempting to use % of input bitrate as output bitrate');
                 // check if input bitrate is available
-                var mediainfoIndex = stream.index + 1;
-                var inputBitrate = (_d = (_c = (_b = (_a = args === null || args === void 0 ? void 0 : args.inputFileObj) === null || _a === void 0 ? void 0 : _a.mediaInfo) === null || _b === void 0 ? void 0 : _b.track) === null || _c === void 0 ? void 0 : _c[mediainfoIndex]) === null || _d === void 0 ? void 0 : _d.BitRate;
+                const mediainfoIndex = stream.index + 1;
+                let inputBitrate = (_d = (_c = (_b = (_a = args === null || args === void 0 ? void 0 : args.inputFileObj) === null || _a === void 0 ? void 0 : _a.mediaInfo) === null || _b === void 0 ? void 0 : _b.track) === null || _c === void 0 ? void 0 : _c[mediainfoIndex]) === null || _d === void 0 ? void 0 : _d.BitRate;
                 if (inputBitrate) {
-                    args.jobLog("Found input bitrate: ".concat(inputBitrate));
+                    args.jobLog(`Found input bitrate: ${inputBitrate}`);
                     // @ts-expect-error type
                     inputBitrate = parseInt(inputBitrate, 10) / 1000;
-                    var targetBitrate = (inputBitrate * (parseInt(targetBitratePercent, 10) / 100));
-                    args.jobLog("Setting video bitrate as ".concat(targetBitrate, "k"));
-                    stream.outputArgs.push("-b:".concat(ffType, ":{outputTypeIndex}"), "".concat(targetBitrate, "k"));
+                    const targetBitrate = (inputBitrate * (parseInt(targetBitratePercent, 10) / 100));
+                    args.jobLog(`Setting video bitrate as ${targetBitrate}k`);
+                    stream.outputArgs.push(`-b:${ffType}:{outputTypeIndex}`, `${targetBitrate}k`);
                 }
                 else {
-                    args.jobLog("Unable to find input bitrate, setting fallback bitrate as ".concat(fallbackBitrate, "k"));
-                    stream.outputArgs.push("-b:".concat(ffType, ":{outputTypeIndex}"), "".concat(fallbackBitrate, "k"));
+                    args.jobLog(`Unable to find input bitrate, setting fallback bitrate as ${fallbackBitrate}k`);
+                    stream.outputArgs.push(`-b:${ffType}:{outputTypeIndex}`, `${fallbackBitrate}k`);
                 }
             }
             else {
-                args.jobLog("Using fixed bitrate. Setting video bitrate as ".concat(bitrate, "k"));
-                stream.outputArgs.push("-b:".concat(ffType, ":{outputTypeIndex}"), "".concat(bitrate, "k"));
+                args.jobLog(`Using fixed bitrate. Setting video bitrate as ${bitrate}k`);
+                stream.outputArgs.push(`-b:${ffType}:{outputTypeIndex}`, `${bitrate}k`);
             }
         }
     });

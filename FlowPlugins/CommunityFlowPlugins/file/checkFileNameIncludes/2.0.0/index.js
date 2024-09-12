@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check File Name Includes',
     description: 'Check if a file name includes specific terms. Only needs to match one term',
     style: {
@@ -57,32 +57,32 @@ var details = function () { return ({
             tooltip: 'File name does not contain any of the terms or patterns',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var terms = String(args.inputs.terms);
-    var pattern = String(args.inputs.pattern);
-    var includeFileDirectory = args.inputs.includeFileDirectory;
-    var fileName = includeFileDirectory
+    const terms = String(args.inputs.terms);
+    const pattern = String(args.inputs.pattern);
+    const { includeFileDirectory } = args.inputs;
+    const fileName = includeFileDirectory
         ? args.inputFileObj._id
-        : "".concat((0, fileUtils_1.getFileName)(args.inputFileObj._id), ".").concat((0, fileUtils_1.getContainer)(args.inputFileObj._id));
-    var searchCriteriasArray = terms.trim().split(',')
-        .map(function (term) { return term.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'); }); // https://github.com/tc39/proposal-regex-escaping
+        : `${(0, fileUtils_1.getFileName)(args.inputFileObj._id)}.${(0, fileUtils_1.getContainer)(args.inputFileObj._id)}`;
+    const searchCriteriasArray = terms.trim().split(',')
+        .map((term) => term.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&')); // https://github.com/tc39/proposal-regex-escaping
     if (pattern) {
         searchCriteriasArray.push(pattern);
     }
-    var searchCriteriaMatched = searchCriteriasArray
-        .find(function (searchCriteria) { return new RegExp(searchCriteria).test(fileName); });
-    var isAMatch = searchCriteriaMatched !== undefined;
+    const searchCriteriaMatched = searchCriteriasArray
+        .find((searchCriteria) => new RegExp(searchCriteria).test(fileName));
+    const isAMatch = searchCriteriaMatched !== undefined;
     if (isAMatch) {
-        args.jobLog("'".concat(fileName, "' includes '").concat(searchCriteriaMatched, "'"));
+        args.jobLog(`'${fileName}' includes '${searchCriteriaMatched}'`);
     }
     else {
-        args.jobLog("'".concat(fileName, "' does not include any of the terms or patterns"));
+        args.jobLog(`'${fileName}' does not include any of the terms or patterns`);
     }
     return {
         outputFileObj: args.inputFileObj,

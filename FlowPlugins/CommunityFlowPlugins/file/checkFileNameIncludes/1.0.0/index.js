@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check File Name Includes',
     description: 'Check if a file name includes specific terms. Only needs to match one term',
     style: {
@@ -37,17 +37,17 @@ var details = function () { return ({
             tooltip: 'File name does not contains terms',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var fileName = "".concat((0, fileUtils_1.getFileName)(args.inputFileObj._id), ".").concat((0, fileUtils_1.getContainer)(args.inputFileObj._id));
-    var terms = String(args.inputs.terms).trim().split(',');
-    var containsTerms = false;
-    for (var i = 0; i < terms.length; i++) {
+    const fileName = `${(0, fileUtils_1.getFileName)(args.inputFileObj._id)}.${(0, fileUtils_1.getContainer)(args.inputFileObj._id)}`;
+    const terms = String(args.inputs.terms).trim().split(',');
+    let containsTerms = false;
+    for (let i = 0; i < terms.length; i++) {
         if (fileName.includes(terms[i])) {
             containsTerms = true;
             break;

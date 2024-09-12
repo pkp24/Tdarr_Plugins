@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check File Medium',
     description: 'Check if file is video, audio or other type of file',
     style: {
@@ -29,14 +29,14 @@ var details = function () { return ({
             tooltip: 'File medium is Other',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var outputNumber = 1;
+    let outputNumber = 1;
     switch (args.inputFileObj.fileMedium) {
         case 'video':
             outputNumber = 1;
@@ -52,7 +52,7 @@ var plugin = function (args) {
     }
     return {
         outputFileObj: args.inputFileObj,
-        outputNumber: outputNumber,
+        outputNumber,
         variables: args.variables,
     };
 };

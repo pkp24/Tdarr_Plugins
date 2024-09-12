@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var formatWindowsRootFolder = function (path) {
+const formatWindowsRootFolder = (path) => {
     // Remove '.' from end of Windows root folder mapping e.g. 'E:.'
     if (path.length === 3
         && path.charAt(1) === ':'
@@ -10,9 +10,8 @@ var formatWindowsRootFolder = function (path) {
     }
     return path;
 };
-var normJoinPath = function (_a) {
-    var upath = _a.upath, paths = _a.paths;
-    var path = upath.joinSafe.apply(upath, paths);
+const normJoinPath = ({ upath, paths, }) => {
+    let path = upath.joinSafe(...paths);
     path = formatWindowsRootFolder(path);
     return path;
 };

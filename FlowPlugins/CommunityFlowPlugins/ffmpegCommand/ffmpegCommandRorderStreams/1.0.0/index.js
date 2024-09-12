@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
+const flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Reorder Streams',
     description: 'Reorder Streams',
     style: {
@@ -24,7 +24,14 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "Specify the process order.\nFor example, if 'languages' is first, the streams will be ordered based on that first.\nSo put the most important properties last.\nThe default order is suitable for most people.\n\n        \\nExample:\\n\n        codecs,channels,languages,streamTypes\n        ",
+            tooltip: `Specify the process order.
+For example, if 'languages' is first, the streams will be ordered based on that first.
+So put the most important properties last.
+The default order is suitable for most people.
+
+        \\nExample:\\n
+        codecs,channels,languages,streamTypes
+        `,
         },
         {
             label: 'Languages',
@@ -34,7 +41,10 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "Specify the language tags order, separated by commas. Leave blank to disable.\n        \\nExample:\\n\n        eng,fre\n        ",
+            tooltip: `Specify the language tags order, separated by commas. Leave blank to disable.
+        \\nExample:\\n
+        eng,fre
+        `,
         },
         {
             label: 'Channels',
@@ -44,7 +54,10 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "Specify the channels order, separated by commas. Leave blank to disable.\n          \n          \\nExample:\\n\n          7.1,5.1,2,1",
+            tooltip: `Specify the channels order, separated by commas. Leave blank to disable.
+          
+          \\nExample:\\n
+          7.1,5.1,2,1`,
         },
         {
             label: 'Codecs',
@@ -54,7 +67,10 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "Specify the codec order, separated by commas. Leave blank to disable.\n          \n          \\nExample:\\n\n          aac,ac3",
+            tooltip: `Specify the codec order, separated by commas. Leave blank to disable.
+          
+          \\nExample:\\n
+          aac,ac3`,
         },
         {
             label: 'Stream Types',
@@ -64,7 +80,10 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "Specify the streamTypes order, separated by commas. Leave blank to disable.\n        \\nExample:\\n\n        video,audio,subtitle\n        ",
+            tooltip: `Specify the streamTypes order, separated by commas. Leave blank to disable.
+        \\nExample:\\n
+        video,audio,subtitle
+        `,
         },
     ],
     outputs: [
@@ -73,26 +92,26 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     (0, flowUtils_1.checkFfmpegCommandInit)(args);
-    var streams = JSON.parse(JSON.stringify(args.variables.ffmpegCommand.streams));
-    streams.forEach(function (stream, index) {
+    let streams = JSON.parse(JSON.stringify(args.variables.ffmpegCommand.streams));
+    streams.forEach((stream, index) => {
         // eslint-disable-next-line no-param-reassign
         stream.typeIndex = index;
     });
-    var originalStreams = JSON.stringify(streams);
-    var sortStreams = function (sortType) {
-        var items = sortType.inputs.split(',');
+    const originalStreams = JSON.stringify(streams);
+    const sortStreams = (sortType) => {
+        const items = sortType.inputs.split(',');
         items.reverse();
-        for (var i = 0; i < items.length; i += 1) {
-            var matchedStreams = [];
-            for (var j = 0; j < streams.length; j += 1) {
+        for (let i = 0; i < items.length; i += 1) {
+            const matchedStreams = [];
+            for (let j = 0; j < streams.length; j += 1) {
                 if (String(sortType.getValue(streams[j])) === String(items[i])) {
                     if (streams[j].codec_long_name
                         && (streams[j].codec_long_name.includes('image')
@@ -109,11 +128,11 @@ var plugin = function (args) {
             streams = matchedStreams.concat(streams);
         }
     };
-    var processOrder = String(args.inputs.processOrder);
-    var _a = args.inputs, languages = _a.languages, codecs = _a.codecs, channels = _a.channels, streamTypes = _a.streamTypes;
-    var sortTypes = {
+    const processOrder = String(args.inputs.processOrder);
+    const { languages, codecs, channels, streamTypes, } = args.inputs;
+    const sortTypes = {
         languages: {
-            getValue: function (stream) {
+            getValue: (stream) => {
                 var _a;
                 if ((_a = stream === null || stream === void 0 ? void 0 : stream.tags) === null || _a === void 0 ? void 0 : _a.language) {
                     return stream.tags.language;
@@ -123,7 +142,7 @@ var plugin = function (args) {
             inputs: languages,
         },
         codecs: {
-            getValue: function (stream) {
+            getValue: (stream) => {
                 try {
                     return stream.codec_name;
                 }
@@ -135,8 +154,8 @@ var plugin = function (args) {
             inputs: codecs,
         },
         channels: {
-            getValue: function (stream) {
-                var chanMap = {
+            getValue: (stream) => {
+                const chanMap = {
                     8: '7.1',
                     6: '5.1',
                     2: '2',
@@ -150,7 +169,7 @@ var plugin = function (args) {
             inputs: channels,
         },
         streamTypes: {
-            getValue: function (stream) {
+            getValue: (stream) => {
                 if (stream.codec_type) {
                     return stream.codec_type;
                 }
@@ -159,8 +178,8 @@ var plugin = function (args) {
             inputs: streamTypes,
         },
     };
-    var processOrderArr = processOrder.split(',');
-    for (var k = 0; k < processOrderArr.length; k += 1) {
+    const processOrderArr = processOrder.split(',');
+    for (let k = 0; k < processOrderArr.length; k += 1) {
         if (sortTypes[processOrderArr[k]] && sortTypes[processOrderArr[k]].inputs) {
             sortStreams(sortTypes[processOrderArr[k]]);
         }

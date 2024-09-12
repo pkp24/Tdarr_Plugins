@@ -2,9 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Require Review',
-    description: "Makes the flow pause.\n  The file will stay in the staging section on the Tdarr tab until the user clicks the \"Reviewed\" button.\n\n  Note: The 'Auto accept successful transcodes' option on the Tdarr tab will cause this plugin to be skipped.\n  ",
+    description: `Makes the flow pause.
+  The file will stay in the staging section on the Tdarr tab until the user clicks the "Reviewed" button.
+
+  Note: The 'Auto accept successful transcodes' option on the Tdarr tab will cause this plugin to be skipped.
+  `,
     style: {
         borderColor: 'yellow',
     },
@@ -21,11 +25,11 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     return {

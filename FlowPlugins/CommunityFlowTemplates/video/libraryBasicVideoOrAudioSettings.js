@@ -3,9 +3,10 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     name: 'Library Basic Video or Audio Settings',
-    description: "Basic Video or Audio settings designed to replicate\n  the Basic Video or Basic Audio settings in the library settings",
+    description: `Basic Video or Audio settings designed to replicate
+  the Basic Video or Basic Audio settings in the library settings`,
     tags: '',
     flowPlugins: [
         {
@@ -67,7 +68,9 @@ var details = function () { return ({
             },
         },
         {
-            name: "By default this flow will replace the original file. If you'd like to move the\n file to an output directory and delete the original file then connect the 'Basic Video or Audio\n Settings' plugin to the 'Move To Directory'",
+            name: `By default this flow will replace the original file. If you'd like to move the
+ file to an output directory and delete the original file then connect the 'Basic Video or Audio
+ Settings' plugin to the 'Move To Directory'`,
             sourceRepo: 'Community',
             pluginName: 'comment',
             version: '1.0.0',
@@ -101,5 +104,5 @@ var details = function () { return ({
             id: 'f2s4CS2H5',
         },
     ],
-}); };
+});
 exports.details = details;

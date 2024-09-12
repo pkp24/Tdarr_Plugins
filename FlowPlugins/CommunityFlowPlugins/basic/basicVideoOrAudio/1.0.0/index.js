@@ -8,50 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var cliUtils_1 = require("../../../../FlowHelpers/1.0.0/cliUtils");
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const cliUtils_1 = require("../../../../FlowHelpers/1.0.0/cliUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Basic Video or Audio Settings',
-    description: "Basic Video or Audio settings designed to replicate\n   the Basic Video or Basic Audio  settings in the library settings.\n   ",
+    description: `Basic Video or Audio settings designed to replicate
+   the Basic Video or Basic Audio  settings in the library settings.
+   `,
     style: {
         borderColor: 'green',
     },
@@ -261,146 +227,140 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) { return __awaiter(void 0, void 0, void 0, function () {
-    var lib, basicSettingsType, container, cliTool, cliArguments, codecFilter, codecs, fileSizeRangeMinMB, fileSizeRangeMaxMB, videoHeightRangeMin, videoHeightRangeMax, videoWidthRangeMin, videoWidthRangeMax, noTranscodeResponse, size, mainStream, height, width, codec, outputFilePath, cliArgs, cliPath, argsSplit, cli, res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                lib = require('../../../../../methods/lib')();
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
-                args.inputs = lib.loadDefaultValues(args.inputs, details);
-                basicSettingsType = String(args.inputs.basicSettingsType);
-                container = String(args.inputs.outputFileContainer).split('.').join('');
-                cliTool = String(args.inputs.cliTool);
-                cliArguments = String(args.inputs.cliArguments);
-                codecFilter = String(args.inputs.codecFilter);
-                codecs = String(args.inputs.codecs).split(',').map(function (codec) { return codec.trim(); });
-                fileSizeRangeMinMB = Number(args.inputs.fileSizeRangeMinMB);
-                fileSizeRangeMaxMB = Number(args.inputs.fileSizeRangeMaxMB);
-                videoHeightRangeMin = Number(args.inputs.videoHeightRangeMin);
-                videoHeightRangeMax = Number(args.inputs.videoHeightRangeMax);
-                videoWidthRangeMin = Number(args.inputs.videoWidthRangeMin);
-                videoWidthRangeMax = Number(args.inputs.videoWidthRangeMax);
-                noTranscodeResponse = {
-                    outputFileObj: {
-                        _id: args.inputFileObj._id,
-                    },
-                    outputNumber: 1,
-                    variables: args.variables,
-                };
-                size = args.inputFileObj.file_size;
-                if (size < fileSizeRangeMinMB || size > fileSizeRangeMaxMB) {
-                    args.jobLog("Skipping ".concat(args.inputFileObj._id, " due to size ").concat(size, "MB not in ")
-                        + "range ".concat(fileSizeRangeMinMB, "MB to ").concat(fileSizeRangeMaxMB, "MB"));
-                    return [2 /*return*/, noTranscodeResponse];
-                }
-                args.jobLog("Processing ".concat(args.inputFileObj._id, " due to size ").concat(size, "MB in ")
-                    + "range ".concat(fileSizeRangeMinMB, "MB to ").concat(fileSizeRangeMaxMB, "MB"));
-                if (!args.inputFileObj.ffProbeData.streams) {
-                    throw new Error('No streams found in file FFprobe data');
-                }
-                mainStream = args.inputFileObj.ffProbeData.streams.find(function (stream) { return stream.codec_type === basicSettingsType; });
-                if (!mainStream) {
-                    throw new Error("No ".concat(basicSettingsType, " stream found in file FFprobe data"));
-                }
-                if (basicSettingsType === 'video') {
-                    height = mainStream.height || 0;
-                    width = mainStream.width || 0;
-                    if (height < videoHeightRangeMin || height > videoHeightRangeMax) {
-                        args.jobLog("Skipping ".concat(args.inputFileObj._id, " due to height ").concat(height, " not in ")
-                            + "range ".concat(videoHeightRangeMin, " to ").concat(videoHeightRangeMax));
-                        return [2 /*return*/, noTranscodeResponse];
-                    }
-                    args.jobLog("Processing ".concat(args.inputFileObj._id, " due to height ").concat(height, " in ")
-                        + "range ".concat(videoHeightRangeMin, " to ").concat(videoHeightRangeMax));
-                    if (width < videoWidthRangeMin || width > videoWidthRangeMax) {
-                        args.jobLog("Skipping ".concat(args.inputFileObj._id, " due to width ").concat(width, " not in ")
-                            + "range ".concat(videoWidthRangeMin, " to ").concat(videoWidthRangeMax));
-                        return [2 /*return*/, noTranscodeResponse];
-                    }
-                    args.jobLog("Processing ".concat(args.inputFileObj._id, " due to width ").concat(width, " in ")
-                        + "range ".concat(videoWidthRangeMin, " to ").concat(videoWidthRangeMax));
-                }
-                codec = mainStream.codec_name;
-                if (codecFilter === 'allow') {
-                    if (!codecs.includes(codec)) {
-                        args.jobLog("Skipping ".concat(args.inputFileObj._id, " due to codec ").concat(codec, " not in list ").concat(codecs));
-                        return [2 /*return*/, noTranscodeResponse];
-                    }
-                    args.jobLog("Processing ".concat(args.inputFileObj._id, " due to codec ").concat(codec, " in list ").concat(codecs));
-                }
-                else {
-                    if (codecs.includes(codec)) {
-                        args.jobLog("Skipping ".concat(args.inputFileObj._id, " due to codec ").concat(codec, " in list ").concat(codecs));
-                        return [2 /*return*/, noTranscodeResponse];
-                    }
-                    args.jobLog("Processing ".concat(args.inputFileObj._id, " due to codec ").concat(codec, " not in list ").concat(codecs));
-                }
-                if (container === 'original') {
-                    container = (0, fileUtils_1.getContainer)(args.inputFileObj._id);
-                }
-                outputFilePath = "".concat((0, fileUtils_1.getPluginWorkDir)(args), "/").concat((0, fileUtils_1.getFileName)(args.inputFileObj._id), ".").concat(container);
-                cliArgs = [];
-                cliPath = '';
-                if (cliTool === 'handbrake') {
-                    cliPath = args.handbrakePath;
-                    cliArgs = __spreadArray([
-                        '-i',
-                        "".concat(args.inputFileObj._id),
-                        '-o',
-                        "".concat(outputFilePath)
-                    ], args.deps.parseArgsStringToArgv(cliArguments, '', ''), true);
-                }
-                else {
-                    cliPath = args.ffmpegPath;
-                    argsSplit = void 0;
-                    if (cliArguments.includes('<io>')) {
-                        argsSplit = cliArguments.split('<io>');
-                    }
-                    else {
-                        argsSplit = cliArguments.split(',');
-                    }
-                    cliArgs = __spreadArray(__spreadArray(__spreadArray(__spreadArray([], args.deps.parseArgsStringToArgv(argsSplit[0], '', ''), true), [
-                        '-i',
-                        "".concat(args.inputFileObj._id)
-                    ], false), args.deps.parseArgsStringToArgv(argsSplit[1], '', ''), true), [
-                        "".concat(outputFilePath),
-                    ], false);
-                }
-                args.updateWorker({
-                    CLIType: cliPath,
-                    preset: cliArgs.join(' '),
-                });
-                cli = new cliUtils_1.CLI({
-                    cli: cliPath,
-                    spawnArgs: cliArgs,
-                    spawnOpts: {},
-                    jobLog: args.jobLog,
-                    outputFilePath: outputFilePath,
-                    inputFileObj: args.inputFileObj,
-                    logFullCliOutput: args.logFullCliOutput,
-                    updateWorker: args.updateWorker,
-                    args: args,
-                });
-                return [4 /*yield*/, cli.runCli()];
-            case 1:
-                res = _a.sent();
-                if (res.cliExitCode !== 0) {
-                    args.jobLog("Running ".concat(cliTool, " failed"));
-                    throw new Error("Running ".concat(cliTool, " failed"));
-                }
-                args.logOutcome('tSuc');
-                return [2 /*return*/, {
-                        outputFileObj: {
-                            _id: outputFilePath,
-                        },
-                        outputNumber: 1,
-                        variables: args.variables,
-                    }];
+const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
+    const lib = require('../../../../../methods/lib')();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
+    args.inputs = lib.loadDefaultValues(args.inputs, details);
+    const basicSettingsType = String(args.inputs.basicSettingsType);
+    let container = String(args.inputs.outputFileContainer).split('.').join('');
+    const cliTool = String(args.inputs.cliTool);
+    const cliArguments = String(args.inputs.cliArguments);
+    const codecFilter = String(args.inputs.codecFilter);
+    const codecs = String(args.inputs.codecs).split(',').map((codec) => codec.trim());
+    const fileSizeRangeMinMB = Number(args.inputs.fileSizeRangeMinMB);
+    const fileSizeRangeMaxMB = Number(args.inputs.fileSizeRangeMaxMB);
+    const videoHeightRangeMin = Number(args.inputs.videoHeightRangeMin);
+    const videoHeightRangeMax = Number(args.inputs.videoHeightRangeMax);
+    const videoWidthRangeMin = Number(args.inputs.videoWidthRangeMin);
+    const videoWidthRangeMax = Number(args.inputs.videoWidthRangeMax);
+    const noTranscodeResponse = {
+        outputFileObj: {
+            _id: args.inputFileObj._id,
+        },
+        outputNumber: 1,
+        variables: args.variables,
+    };
+    const size = args.inputFileObj.file_size;
+    if (size < fileSizeRangeMinMB || size > fileSizeRangeMaxMB) {
+        args.jobLog(`Skipping ${args.inputFileObj._id} due to size ${size}MB not in `
+            + `range ${fileSizeRangeMinMB}MB to ${fileSizeRangeMaxMB}MB`);
+        return noTranscodeResponse;
+    }
+    args.jobLog(`Processing ${args.inputFileObj._id} due to size ${size}MB in `
+        + `range ${fileSizeRangeMinMB}MB to ${fileSizeRangeMaxMB}MB`);
+    if (!args.inputFileObj.ffProbeData.streams) {
+        throw new Error('No streams found in file FFprobe data');
+    }
+    const mainStream = args.inputFileObj.ffProbeData.streams.find((stream) => stream.codec_type === basicSettingsType);
+    if (!mainStream) {
+        throw new Error(`No ${basicSettingsType} stream found in file FFprobe data`);
+    }
+    if (basicSettingsType === 'video') {
+        const height = mainStream.height || 0;
+        const width = mainStream.width || 0;
+        if (height < videoHeightRangeMin || height > videoHeightRangeMax) {
+            args.jobLog(`Skipping ${args.inputFileObj._id} due to height ${height} not in `
+                + `range ${videoHeightRangeMin} to ${videoHeightRangeMax}`);
+            return noTranscodeResponse;
         }
+        args.jobLog(`Processing ${args.inputFileObj._id} due to height ${height} in `
+            + `range ${videoHeightRangeMin} to ${videoHeightRangeMax}`);
+        if (width < videoWidthRangeMin || width > videoWidthRangeMax) {
+            args.jobLog(`Skipping ${args.inputFileObj._id} due to width ${width} not in `
+                + `range ${videoWidthRangeMin} to ${videoWidthRangeMax}`);
+            return noTranscodeResponse;
+        }
+        args.jobLog(`Processing ${args.inputFileObj._id} due to width ${width} in `
+            + `range ${videoWidthRangeMin} to ${videoWidthRangeMax}`);
+    }
+    const codec = mainStream.codec_name;
+    if (codecFilter === 'allow') {
+        if (!codecs.includes(codec)) {
+            args.jobLog(`Skipping ${args.inputFileObj._id} due to codec ${codec} not in list ${codecs}`);
+            return noTranscodeResponse;
+        }
+        args.jobLog(`Processing ${args.inputFileObj._id} due to codec ${codec} in list ${codecs}`);
+    }
+    else {
+        if (codecs.includes(codec)) {
+            args.jobLog(`Skipping ${args.inputFileObj._id} due to codec ${codec} in list ${codecs}`);
+            return noTranscodeResponse;
+        }
+        args.jobLog(`Processing ${args.inputFileObj._id} due to codec ${codec} not in list ${codecs}`);
+    }
+    if (container === 'original') {
+        container = (0, fileUtils_1.getContainer)(args.inputFileObj._id);
+    }
+    const outputFilePath = `${(0, fileUtils_1.getPluginWorkDir)(args)}/${(0, fileUtils_1.getFileName)(args.inputFileObj._id)}.${container}`;
+    let cliArgs = [];
+    let cliPath = '';
+    if (cliTool === 'handbrake') {
+        cliPath = args.handbrakePath;
+        cliArgs = [
+            '-i',
+            `${args.inputFileObj._id}`,
+            '-o',
+            `${outputFilePath}`,
+            ...args.deps.parseArgsStringToArgv(cliArguments, '', ''),
+        ];
+    }
+    else {
+        cliPath = args.ffmpegPath;
+        let argsSplit;
+        if (cliArguments.includes('<io>')) {
+            argsSplit = cliArguments.split('<io>');
+        }
+        else {
+            argsSplit = cliArguments.split(',');
+        }
+        cliArgs = [
+            ...args.deps.parseArgsStringToArgv(argsSplit[0], '', ''),
+            '-i',
+            `${args.inputFileObj._id}`,
+            ...args.deps.parseArgsStringToArgv(argsSplit[1], '', ''),
+            `${outputFilePath}`,
+        ];
+    }
+    args.updateWorker({
+        CLIType: cliPath,
+        preset: cliArgs.join(' '),
     });
-}); };
+    const cli = new cliUtils_1.CLI({
+        cli: cliPath,
+        spawnArgs: cliArgs,
+        spawnOpts: {},
+        jobLog: args.jobLog,
+        outputFilePath,
+        inputFileObj: args.inputFileObj,
+        logFullCliOutput: args.logFullCliOutput,
+        updateWorker: args.updateWorker,
+        args,
+    });
+    const res = yield cli.runCli();
+    if (res.cliExitCode !== 0) {
+        args.jobLog(`Running ${cliTool} failed`);
+        throw new Error(`Running ${cliTool} failed`);
+    }
+    args.logOutcome('tSuc');
+    return {
+        outputFileObj: {
+            _id: outputFilePath,
+        },
+        outputNumber: 1,
+        variables: args.variables,
+    };
+});
 exports.plugin = plugin;

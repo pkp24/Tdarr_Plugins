@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check Video Resolution',
     description: 'Check if video is 480p,576p,720p,1080p,1440p,4KUHD,DCI4K,8KUHD,Other',
     style: {
@@ -53,14 +53,14 @@ var details = function () { return ({
             tooltip: 'File is Other',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var outputNumber = 9;
+    let outputNumber = 9;
     switch (args.inputFileObj.video_resolution) {
         case '480p':
             outputNumber = 1;
@@ -91,7 +91,7 @@ var plugin = function (args) {
     }
     return {
         outputFileObj: args.inputFileObj,
-        outputNumber: outputNumber,
+        outputNumber,
         variables: args.variables,
     };
 };

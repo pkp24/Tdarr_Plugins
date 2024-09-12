@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check File Extension',
     description: 'Check file extension',
     style: {
@@ -37,17 +37,17 @@ var details = function () { return ({
             tooltip: 'File is not one of extensions',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var extensions = String(args.inputs.extensions);
-    var extensionArray = extensions.trim().split(',').map(function (row) { return row.toLowerCase(); });
-    var extension = (0, fileUtils_1.getContainer)(args.inputFileObj._id).toLowerCase();
-    var extensionMatch = false;
+    const extensions = String(args.inputs.extensions);
+    const extensionArray = extensions.trim().split(',').map((row) => row.toLowerCase());
+    const extension = (0, fileUtils_1.getContainer)(args.inputFileObj._id).toLowerCase();
+    let extensionMatch = false;
     if (extensionArray.includes(extension)) {
         extensionMatch = true;
     }

@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     name: 'Basic HEVC Video Flow - Migz 50%',
     description: 'Basic HEVC video flow which uses the Migz GPU (NVENC) '
         + 'and Migz CPU plugins to aim for 50% file size reduction.',
@@ -173,5 +173,5 @@ var details = function () { return ({
             id: 'Blu0QflQK',
         },
     ],
-}); };
+});
 exports.details = details;

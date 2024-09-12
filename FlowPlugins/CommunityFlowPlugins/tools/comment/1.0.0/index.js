@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Comment',
     nameUI: {
         type: 'textarea',
@@ -10,7 +10,8 @@ var details = function () { return ({
             height: '250px',
         },
     },
-    description: "Add a comment to your flow. Can place anywhere and link together.\n  Any file input into the comment will be passed straight through.",
+    description: `Add a comment to your flow. Can place anywhere and link together.
+  Any file input into the comment will be passed straight through.`,
     style: {
         borderColor: 'white',
         borderRadius: '10px',
@@ -29,11 +30,11 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     return {

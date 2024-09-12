@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     name: 'Basic HEVC Video Flow',
     description: 'Basic HEVC Video Flow',
     tags: '',
@@ -137,5 +137,5 @@ var details = function () { return ({
             id: 'ljOeP0cAZ',
         },
     ],
-}); };
+});
 exports.details = details;

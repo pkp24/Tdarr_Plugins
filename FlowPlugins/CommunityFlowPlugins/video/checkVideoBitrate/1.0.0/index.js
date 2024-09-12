@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check Video Bitrate',
     description: 'Check if video bitrate is within a specific range',
     style: {
@@ -61,17 +61,17 @@ var details = function () { return ({
             tooltip: 'File not within range',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
+const plugin = (args) => {
     var _a, _b;
-    var lib = require('../../../../../methods/lib')();
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var isWithinRange = false;
-    var greaterThanBits = Number(args.inputs.greaterThan);
-    var lessThanBits = Number(args.inputs.lessThan);
+    let isWithinRange = false;
+    let greaterThanBits = Number(args.inputs.greaterThan);
+    let lessThanBits = Number(args.inputs.lessThan);
     if (args.inputs.unit === 'kbps') {
         greaterThanBits *= 1000;
         lessThanBits *= 1000;
@@ -80,13 +80,13 @@ var plugin = function (args) {
         greaterThanBits *= 1000000;
         lessThanBits *= 1000000;
     }
-    var hasVideoBitrate = false;
+    let hasVideoBitrate = false;
     if ((_b = (_a = args.inputFileObj) === null || _a === void 0 ? void 0 : _a.mediaInfo) === null || _b === void 0 ? void 0 : _b.track) {
-        args.inputFileObj.mediaInfo.track.forEach(function (stream) {
+        args.inputFileObj.mediaInfo.track.forEach((stream) => {
             if (stream['@type'].toLowerCase() === 'video') {
                 if (stream.BitRate) {
                     hasVideoBitrate = true;
-                    args.jobLog("Found video bitrate: ".concat(stream.BitRate));
+                    args.jobLog(`Found video bitrate: ${stream.BitRate}`);
                 }
                 if (stream.BitRate >= greaterThanBits && stream.BitRate <= lessThanBits) {
                     isWithinRange = true;

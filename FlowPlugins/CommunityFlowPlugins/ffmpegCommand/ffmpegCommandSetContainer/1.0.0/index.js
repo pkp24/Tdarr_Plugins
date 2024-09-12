@@ -2,10 +2,10 @@
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
-var flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
+const fileUtils_1 = require("../../../../FlowHelpers/1.0.0/fileUtils");
+const flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
 /* eslint-disable no-param-reassign */
-var details = function () { return ({
+const details = () => ({
     name: 'Set Container',
     description: 'Set the container of the output file',
     style: {
@@ -40,7 +40,11 @@ var details = function () { return ({
             inputUI: {
                 type: 'switch',
             },
-            tooltip: "\nSpecify if you want to force conform the file to the new container,\nThis is useful if not all streams are supported by the new container. \nFor example mkv does not support data streams.\n      ",
+            tooltip: `
+Specify if you want to force conform the file to the new container,
+This is useful if not all streams are supported by the new container. 
+For example mkv does not support data streams.
+      `,
         },
     ],
     outputs: [
@@ -49,25 +53,25 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     (0, flowUtils_1.checkFfmpegCommandInit)(args);
-    var newContainer = String(args.inputs.container);
-    var forceConform = args.inputs.forceConform;
+    const newContainer = String(args.inputs.container);
+    const { forceConform } = args.inputs;
     if ((0, fileUtils_1.getContainer)(args.inputFileObj._id) !== newContainer) {
         args.variables.ffmpegCommand.container = newContainer;
         args.variables.ffmpegCommand.shouldProcess = true;
         if (forceConform === true) {
-            for (var i = 0; i < args.variables.ffmpegCommand.streams.length; i += 1) {
-                var stream = args.variables.ffmpegCommand.streams[i];
+            for (let i = 0; i < args.variables.ffmpegCommand.streams.length; i += 1) {
+                const stream = args.variables.ffmpegCommand.streams[i];
                 try {
-                    var codecType = stream.codec_type.toLowerCase();
-                    var codecName = stream.codec_name.toLowerCase();
+                    const codecType = stream.codec_type.toLowerCase();
+                    const codecName = stream.codec_name.toLowerCase();
                     if (newContainer === 'mkv') {
                         if (codecType === 'data'
                             || [
@@ -98,7 +102,7 @@ var plugin = function (args) {
             }
         }
         // handle genpts if coming from odd container
-        var container = args.inputFileObj.container.toLowerCase();
+        const container = args.inputFileObj.container.toLowerCase();
         if ([
             'ts',
             'avi',

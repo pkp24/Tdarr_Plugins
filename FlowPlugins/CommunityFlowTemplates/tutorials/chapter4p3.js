@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     "name": "Chapter 4: Flow Errors Part 3 - Plugin-specific Error Handling",
     "description": "Chapter 4: Flow Errors Part 3 - Plugin-specific Error Handling",
     "tags": "",
@@ -310,5 +310,5 @@ var details = function () { return ({
             "id": "K440_LQm_"
         }
     ]
-}); };
+});
 exports.details = details;

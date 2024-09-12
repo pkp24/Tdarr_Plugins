@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check File Size',
     description: 'Check size of working file',
     style: {
@@ -62,17 +62,17 @@ var details = function () { return ({
             tooltip: 'File not within range',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var isWithinRange = false;
-    var greaterThanBytes = Number(args.inputs.greaterThan);
-    var lessThanBytes = Number(args.inputs.lessThan);
-    var fileSizeBytes = args.inputFileObj.file_size * 1000 * 1000;
+    let isWithinRange = false;
+    let greaterThanBytes = Number(args.inputs.greaterThan);
+    let lessThanBytes = Number(args.inputs.lessThan);
+    const fileSizeBytes = args.inputFileObj.file_size * 1000 * 1000;
     if (args.inputs.unit === 'KB') {
         greaterThanBytes *= 1000;
         lessThanBytes *= 1000;

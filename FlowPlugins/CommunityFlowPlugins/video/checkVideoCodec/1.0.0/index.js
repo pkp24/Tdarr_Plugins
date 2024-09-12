@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check Video Codec',
     description: 'Check if a file has a specific video codec',
     style: {
@@ -50,16 +50,16 @@ var details = function () { return ({
             tooltip: 'File does not have codec',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var hasCodec = false;
+    let hasCodec = false;
     if (args.inputFileObj.ffProbeData.streams) {
-        args.inputFileObj.ffProbeData.streams.forEach(function (stream) {
+        args.inputFileObj.ffProbeData.streams.forEach((stream) => {
             if (stream.codec_type === 'video' && stream.codec_name === args.inputs.codec) {
                 hasCodec = true;
             }

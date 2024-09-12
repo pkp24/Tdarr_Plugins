@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
-var flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
+const flowUtils_1 = require("../../../../FlowHelpers/1.0.0/interfaces/flowUtils");
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Remove Stream By Property',
     description: 'Remove Stream By Property',
     style: {
@@ -24,7 +24,15 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "\n        Enter one stream property to check.\n        \n        \\nExample:\\n\n        codec_name\n\n        \\nExample:\\n\n        tags.language\n        ",
+            tooltip: `
+        Enter one stream property to check.
+        
+        \\nExample:\\n
+        codec_name
+
+        \\nExample:\\n
+        tags.language
+        `,
         },
         {
             label: 'Values To Remove',
@@ -34,7 +42,12 @@ var details = function () { return ({
             inputUI: {
                 type: 'text',
             },
-            tooltip: "\n        Enter values of the property above to remove. For example, if removing by codec_name, could enter ac3,aac:\n        \n        \\nExample:\\n\n        ac3,aac\n        ",
+            tooltip: `
+        Enter values of the property above to remove. For example, if removing by codec_name, could enter ac3,aac:
+        
+        \\nExample:\\n
+        ac3,aac
+        `,
         },
         {
             label: 'Condition',
@@ -48,7 +61,9 @@ var details = function () { return ({
                     'not_includes',
                 ],
             },
-            tooltip: "\n      Specify whether to remove streams that include or do not include the values above.\n      ",
+            tooltip: `
+      Specify whether to remove streams that include or do not include the values above.
+      `,
         },
     ],
     outputs: [
@@ -57,39 +72,39 @@ var details = function () { return ({
             tooltip: 'Continue to next plugin',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     (0, flowUtils_1.checkFfmpegCommandInit)(args);
-    var propertyToCheck = String(args.inputs.propertyToCheck).trim();
-    var valuesToRemove = String(args.inputs.valuesToRemove).trim().split(',').map(function (item) { return item.trim(); });
-    var condition = String(args.inputs.condition);
-    args.variables.ffmpegCommand.streams.forEach(function (stream) {
+    const propertyToCheck = String(args.inputs.propertyToCheck).trim();
+    const valuesToRemove = String(args.inputs.valuesToRemove).trim().split(',').map((item) => item.trim());
+    const condition = String(args.inputs.condition);
+    args.variables.ffmpegCommand.streams.forEach((stream) => {
         var _a;
-        var target = '';
+        let target = '';
         if (propertyToCheck.includes('.')) {
-            var parts = propertyToCheck.split('.');
+            const parts = propertyToCheck.split('.');
             target = (_a = stream[parts[0]]) === null || _a === void 0 ? void 0 : _a[parts[1]];
         }
         else {
             target = stream[propertyToCheck];
         }
         if (target) {
-            var prop = String(target).toLowerCase();
-            for (var i = 0; i < valuesToRemove.length; i += 1) {
-                var val = valuesToRemove[i].toLowerCase();
-                var prefix = "Removing stream index ".concat(stream.index, " because ").concat(propertyToCheck, " of ").concat(prop);
+            const prop = String(target).toLowerCase();
+            for (let i = 0; i < valuesToRemove.length; i += 1) {
+                const val = valuesToRemove[i].toLowerCase();
+                const prefix = `Removing stream index ${stream.index} because ${propertyToCheck} of ${prop}`;
                 if (condition === 'includes' && prop.includes(val)) {
-                    args.jobLog("".concat(prefix, " includes ").concat(val, "\n"));
+                    args.jobLog(`${prefix} includes ${val}\n`);
                     // eslint-disable-next-line no-param-reassign
                     stream.removed = true;
                 }
                 else if (condition === 'not_includes' && !prop.includes(val)) {
-                    args.jobLog("".concat(prefix, " not_includes ").concat(val, "\n"));
+                    args.jobLog(`${prefix} not_includes ${val}\n`);
                     // eslint-disable-next-line no-param-reassign
                     stream.removed = true;
                 }

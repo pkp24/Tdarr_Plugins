@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Check Overall Bitrate',
     description: 'Check if overall file bitrate is within a specific range',
     style: {
@@ -61,16 +61,16 @@ var details = function () { return ({
             tooltip: 'File not within range',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var isWithinRange = false;
-    var greaterThanBits = Number(args.inputs.greaterThan);
-    var lessThanBits = Number(args.inputs.lessThan);
+    let isWithinRange = false;
+    let greaterThanBits = Number(args.inputs.greaterThan);
+    let lessThanBits = Number(args.inputs.lessThan);
     if (args.inputs.unit === 'kbps') {
         greaterThanBits *= 1000;
         lessThanBits *= 1000;
@@ -79,8 +79,8 @@ var plugin = function (args) {
         greaterThanBits *= 1000000;
         lessThanBits *= 1000000;
     }
-    args.jobLog("File bitrate is ".concat(args.inputFileObj.bit_rate, " bps"));
-    args.jobLog("Checking if bitrate is within range ".concat(greaterThanBits, " bps and ").concat(lessThanBits, " bps"));
+    args.jobLog(`File bitrate is ${args.inputFileObj.bit_rate} bps`);
+    args.jobLog(`Checking if bitrate is within range ${greaterThanBits} bps and ${lessThanBits} bps`);
     if (args.inputFileObj.bit_rate >= greaterThanBits && args.inputFileObj.bit_rate <= lessThanBits) {
         isWithinRange = true;
         args.jobLog('File bitrate is within range');

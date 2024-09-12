@@ -3,7 +3,7 @@
 /* eslint-disable import/prefer-default-export */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.details = void 0;
-var details = function () { return ({
+const details = () => ({
     "name": "Chapter 7: Using an Output Folder",
     "description": "Chapter 7: Using an Output Folder",
     "tags": "",
@@ -162,5 +162,5 @@ var details = function () { return ({
             "id": "JX7tzmso3"
         }
     ]
-}); };
+});
 exports.details = details;

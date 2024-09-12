@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-var details = function () { return ({
+const details = () => ({
     name: 'Compare File Duration Ratio',
     description: 'Compare file duration ratio of working file compared to original file using percentage.',
     style: {
@@ -52,18 +52,18 @@ var details = function () { return ({
             tooltip: 'Working file duration % is larger than upper bound',
         },
     ],
-}); };
+});
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-var plugin = function (args) {
-    var lib = require('../../../../../methods/lib')();
+const plugin = (args) => {
+    const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    var getData = function (obj) {
+    const getData = (obj) => {
         var _a, _b;
         try {
             if ((_b = (_a = obj === null || obj === void 0 ? void 0 : obj.ffProbeData) === null || _a === void 0 ? void 0 : _a.format) === null || _b === void 0 ? void 0 : _b.duration) {
-                var dur = Number(obj.ffProbeData.format.duration);
+                const dur = Number(obj.ffProbeData.format.duration);
                 if (dur > 0) {
                     return dur;
                 }
@@ -74,26 +74,26 @@ var plugin = function (args) {
         }
         return 0;
     };
-    var newFileDuration = getData(args.inputFileObj);
-    var origFileDuration = getData(args.originalLibraryFile);
-    args.jobLog("newFileDuration: ".concat(newFileDuration));
-    args.jobLog("origFileDuration: ".concat(origFileDuration));
-    var greaterThanPerc = Number(args.inputs.greaterThan);
-    var lessThanPerc = Number(args.inputs.lessThan);
-    var ratio = (newFileDuration / origFileDuration) * 100;
-    var durationText = "New file has duration ".concat(newFileDuration.toFixed(3), " which is ").concat(ratio, "% ")
-        + "of original file duration:  ".concat(origFileDuration.toFixed(3));
-    var getBound = function (bound) { return (bound / 100) * origFileDuration; };
-    var outputNumber = 1;
-    var errText = 'New file duration not within limits.';
+    const newFileDuration = getData(args.inputFileObj);
+    const origFileDuration = getData(args.originalLibraryFile);
+    args.jobLog(`newFileDuration: ${newFileDuration}`);
+    args.jobLog(`origFileDuration: ${origFileDuration}`);
+    const greaterThanPerc = Number(args.inputs.greaterThan);
+    const lessThanPerc = Number(args.inputs.lessThan);
+    const ratio = (newFileDuration / origFileDuration) * 100;
+    const durationText = `New file has duration ${newFileDuration.toFixed(3)} which is ${ratio}% `
+        + `of original file duration:  ${origFileDuration.toFixed(3)}`;
+    const getBound = (bound) => (bound / 100) * origFileDuration;
+    let outputNumber = 1;
+    const errText = 'New file duration not within limits.';
     if (newFileDuration > getBound(lessThanPerc)) {
         // Item will be errored in UI
-        args.jobLog("".concat(errText, " ").concat(durationText, ". upperBound is ").concat(lessThanPerc, "%"));
+        args.jobLog(`${errText} ${durationText}. upperBound is ${lessThanPerc}%`);
         outputNumber = 3;
     }
     else if (newFileDuration < getBound(greaterThanPerc)) {
         // // Item will be errored in UI
-        args.jobLog("".concat(errText, " ").concat(durationText, ". lowerBound is ").concat(greaterThanPerc, "%"));
+        args.jobLog(`${errText} ${durationText}. lowerBound is ${greaterThanPerc}%`);
         outputNumber = 2;
     }
     else {
@@ -101,7 +101,7 @@ var plugin = function (args) {
     }
     return {
         outputFileObj: args.inputFileObj,
-        outputNumber: outputNumber,
+        outputNumber,
         variables: args.variables,
     };
 };
