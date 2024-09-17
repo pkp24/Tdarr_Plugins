@@ -60,9 +60,8 @@ const plugin = (args) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     const getData = (obj) => {
-        var _a, _b;
         try {
-            if ((_b = (_a = obj === null || obj === void 0 ? void 0 : obj.ffProbeData) === null || _a === void 0 ? void 0 : _a.format) === null || _b === void 0 ? void 0 : _b.duration) {
+            if (obj?.ffProbeData?.format?.duration) {
                 const dur = Number(obj.ffProbeData.format.duration);
                 if (dur > 0) {
                     return dur;

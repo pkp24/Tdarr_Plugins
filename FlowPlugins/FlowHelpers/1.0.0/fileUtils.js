@@ -1,17 +1,8 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getScanTypes = exports.getPluginWorkDir = exports.moveFileAndValidate = exports.getFileSize = exports.getSubStem = exports.getFfType = exports.getFileAbosluteDir = exports.getFileName = exports.getContainer = exports.fileExists = void 0;
 const fs_1 = require("fs");
-const fileExists = (path) => __awaiter(void 0, void 0, void 0, function* () { return !!(yield fs_1.promises.stat(path).catch(() => false)); });
+const fileExists = async (path) => !!(await fs_1.promises.stat(path).catch(() => false));
 exports.fileExists = fileExists;
 const getContainer = (filePath) => {
     const parts = filePath.split('.');
@@ -41,16 +32,16 @@ const getSubStem = ({ inputPathStem, inputPath, }) => {
     return parts.join('/');
 };
 exports.getSubStem = getSubStem;
-const getFileSize = (file) => __awaiter(void 0, void 0, void 0, function* () {
-    const stats = yield fs_1.promises.stat(file);
+const getFileSize = async (file) => {
+    const stats = await fs_1.promises.stat(file);
     const { size } = stats;
     return size;
-});
+};
 exports.getFileSize = getFileSize;
-const moveFileAndValidate = (_a) => __awaiter(void 0, [_a], void 0, function* ({ inputPath, outputPath, args, }) {
-    const inputSize = yield (0, exports.getFileSize)(inputPath);
+const moveFileAndValidate = async ({ inputPath, outputPath, args, }) => {
+    const inputSize = await (0, exports.getFileSize)(inputPath);
     args.jobLog(`Attempt 1: Moving file from ${inputPath} to ${outputPath}`);
-    const res1 = yield new Promise((resolve) => {
+    const res1 = await new Promise((resolve) => {
         args.deps.gracefulfs.rename(inputPath, outputPath, (err) => {
             if (err) {
                 args.jobLog(`Failed to move file from ${inputPath} to ${outputPath}`);
@@ -64,7 +55,7 @@ const moveFileAndValidate = (_a) => __awaiter(void 0, [_a], void 0, function* ({
     });
     let outputSize = 0;
     try {
-        outputSize = yield (0, exports.getFileSize)(outputPath);
+        outputSize = await (0, exports.getFileSize)(outputPath);
     }
     catch (err) {
         args.jobLog(JSON.stringify(err));
@@ -76,7 +67,7 @@ const moveFileAndValidate = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         }
         args.jobLog(`Attempt 1  failed: Moving file from ${inputPath} to ${outputPath}`);
         args.jobLog(`Attempt 2: Moving file from ${inputPath} to ${outputPath}`);
-        const res2 = yield new Promise((resolve) => {
+        const res2 = await new Promise((resolve) => {
             args.deps.mvdir(inputPath, outputPath, { overwrite: true })
                 .then(() => {
                 resolve(true);
@@ -86,7 +77,7 @@ const moveFileAndValidate = (_a) => __awaiter(void 0, [_a], void 0, function* ({
                 resolve(false);
             });
         });
-        outputSize = yield (0, exports.getFileSize)(outputPath);
+        outputSize = await (0, exports.getFileSize)(outputPath);
         if (!res2 || inputSize !== outputSize) {
             if (inputSize !== outputSize) {
                 args.jobLog(`File sizes do not match, input: ${inputSize} `
@@ -97,7 +88,7 @@ const moveFileAndValidate = (_a) => __awaiter(void 0, [_a], void 0, function* ({
             throw new Error(errMessage);
         }
     }
-});
+};
 exports.moveFileAndValidate = moveFileAndValidate;
 const getPluginWorkDir = (args) => {
     const pluginWorkDir = `${args.workDir}/${new Date().getTime()}`;

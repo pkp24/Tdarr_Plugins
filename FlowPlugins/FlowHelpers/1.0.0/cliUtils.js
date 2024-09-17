@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -70,8 +61,7 @@ class CLI {
         this.hbPass = 0;
         this.cancelled = false;
         this.startTime = new Date().getTime();
-        this.updateETA = (perc) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+        this.updateETA = async (perc) => {
             if (perc > 0) {
                 if (this.lastProgCheck === 0) {
                     this.lastProgCheck = new Date().getTime();
@@ -95,7 +85,7 @@ class CLI {
                         let estSize = 0;
                         let outputFileSizeInGbytes;
                         try {
-                            if (yield (0, fileUtils_1.fileExists)(this.config.outputFilePath)) {
+                            if (await (0, fileUtils_1.fileExists)(this.config.outputFilePath)) {
                                 let singleFileSize = fs_1.default.statSync(this.config.outputFilePath);
                                 // @ts-expect-error type
                                 singleFileSize = singleFileSize.size;
@@ -125,7 +115,7 @@ class CLI {
                         this.oldProgress = perc;
                         const secondsSinceStart = (new Date().getTime() - this.startTime) / 1000;
                         // live size compare
-                        if ((_a = this.config.args.variables.liveSizeCompare) === null || _a === void 0 ? void 0 : _a.enabled) {
+                        if (this.config.args.variables.liveSizeCompare?.enabled) {
                             const { compareMethod, thresholdPerc, checkDelaySeconds, } = this.config.args.variables.liveSizeCompare;
                             if (secondsSinceStart > checkDelaySeconds) {
                                 // MB
@@ -163,9 +153,8 @@ class CLI {
                     }
                 }
             }
-        });
+        };
         this.parseOutput = (data) => {
-            var _a, _b, _c, _d, _e, _f, _g;
             const str = `${data}`;
             //
             if (this.config.logFullCliOutput === true) {
@@ -207,7 +196,8 @@ class CLI {
                 let frameCount = 0;
                 try {
                     // @ts-expect-error type
-                    const frameCountTmp = (_a = this.config.inputFileObj.ffProbeData) === null || _a === void 0 ? void 0 : _a.streams.filter((row) => row.codec_type === 'video')[0].nb_frames;
+                    const frameCountTmp = this.config.inputFileObj.ffProbeData?.streams
+                        .filter((row) => row.codec_type === 'video')[0].nb_frames;
                     if (frameCountTmp
                         // @ts-expect-error type
                         && !isNaN(frameCountTmp)) { // eslint-disable-line no-restricted-globals
@@ -221,9 +211,9 @@ class CLI {
                 const percentage = (0, cliParsers_1.ffmpegParser)({
                     str,
                     frameCount,
-                    videoFrameRate: (_c = (_b = this.config.inputFileObj) === null || _b === void 0 ? void 0 : _b.meta) === null || _c === void 0 ? void 0 : _c.VideoFrameRate,
-                    ffprobeDuration: (_e = (_d = this.config.inputFileObj.ffProbeData) === null || _d === void 0 ? void 0 : _d.format) === null || _e === void 0 ? void 0 : _e.duration,
-                    metaDuration: (_g = (_f = this.config.inputFileObj) === null || _f === void 0 ? void 0 : _f.meta) === null || _g === void 0 ? void 0 : _g.Duration,
+                    videoFrameRate: this.config.inputFileObj?.meta?.VideoFrameRate,
+                    ffprobeDuration: this.config.inputFileObj.ffProbeData?.format?.duration,
+                    metaDuration: this.config.inputFileObj?.meta?.Duration,
                 });
                 if (shouldUpdate === true && fps > 0) {
                     this.config.updateWorker({
@@ -271,7 +261,7 @@ class CLI {
                 }
             });
         };
-        this.runCli = () => __awaiter(this, void 0, void 0, function* () {
+        this.runCli = async () => {
             const childProcess = require('child_process');
             const errorLogFull = [];
             this.config.jobLog(`Running ${this.config.cli} ${this.config.spawnArgs.join(' ')}`);
@@ -291,7 +281,7 @@ class CLI {
                 }
             };
             process.on('exit', exitHandler);
-            let cliExitCode = yield new Promise((resolve) => {
+            let cliExitCode = await new Promise((resolve) => {
                 try {
                     const opts = this.config.spawnOpts || {};
                     const spawnArgs = this.config.spawnArgs.map((row) => row.trim()).filter((row) => row !== '');
@@ -344,7 +334,7 @@ class CLI {
                 cliExitCode,
                 errorLogFull,
             };
-        });
+        };
         this.config = config;
     }
 }

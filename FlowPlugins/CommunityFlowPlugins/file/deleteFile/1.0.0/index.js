@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 const fs_1 = require("fs");
@@ -60,7 +51,7 @@ const details = () => ({
 });
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
+const plugin = async (args) => {
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
@@ -68,19 +59,19 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     const { deleteParentFolderIfEmpty } = args.inputs;
     if (fileToDelete === 'workingFile') {
         args.jobLog(`Deleting working file ${args.inputFileObj._id}`);
-        yield fs_1.promises.unlink(args.inputFileObj._id);
+        await fs_1.promises.unlink(args.inputFileObj._id);
     }
     else if (fileToDelete === 'originalFile') {
         args.jobLog(`Deleting original file ${args.originalLibraryFile._id}`);
-        yield fs_1.promises.unlink(args.originalLibraryFile._id);
+        await fs_1.promises.unlink(args.originalLibraryFile._id);
     }
     const fileDir = (0, fileUtils_1.getFileAbosluteDir)(args.originalLibraryFile._id);
     if (deleteParentFolderIfEmpty) {
         args.jobLog(`Checking if folder ${fileDir} is empty`);
-        const files = yield fs_1.promises.readdir(fileDir);
+        const files = await fs_1.promises.readdir(fileDir);
         if (files.length === 0) {
             args.jobLog(`Deleting empty folder ${fileDir}`);
-            yield fs_1.promises.rmdir(fileDir);
+            await fs_1.promises.rmdir(fileDir);
         }
         else {
             args.jobLog(`Folder ${fileDir} is not empty, skipping delete`);
@@ -94,5 +85,5 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         outputNumber: 1,
         variables: args.variables,
     };
-});
+};
 exports.plugin = plugin;

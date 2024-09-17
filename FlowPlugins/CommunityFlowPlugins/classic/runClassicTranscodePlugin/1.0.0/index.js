@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 const cliUtils_1 = require("../../../../FlowHelpers/1.0.0/cliUtils");
@@ -52,12 +43,11 @@ const replaceContainer = (filePath, container) => {
     return parts.join('.');
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+const plugin = async (args) => {
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
-    const outcome = yield (0, classicPlugins_1.runClassicPlugin)(args, 'transcode');
+    const outcome = await (0, classicPlugins_1.runClassicPlugin)(args, 'transcode');
     const { result, absolutePath } = outcome;
     let { cacheFilePath } = outcome;
     args.jobLog(JSON.stringify(result, null, 2));
@@ -83,7 +73,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     else if (result.handbrakeMode) {
         result.cliToUse = 'handbrake';
     }
-    else if (typeof ((_a = result === null || result === void 0 ? void 0 : result.custom) === null || _a === void 0 ? void 0 : _a.cliPath) === 'string') {
+    else if (typeof result?.custom?.cliPath === 'string') {
         const { cliPath } = result.custom;
         if (cliPath.toLowerCase().includes('ffmpeg')) {
             result.cliToUse = 'ffmpeg';
@@ -110,7 +100,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
             variables: args.variables,
         };
     }
-    const customArgs = (_b = result === null || result === void 0 ? void 0 : result.custom) === null || _b === void 0 ? void 0 : _b.args;
+    const customArgs = result?.custom?.args;
     const isCustomConfig = (Array.isArray(customArgs) && customArgs.length > 0)
         || (typeof customArgs === 'string'
             // @ts-expect-error length
@@ -134,7 +124,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     let cliPath = '';
     if (isCustomConfig) {
         // @ts-expect-error cliPath
-        cliPath = (_c = result === null || result === void 0 ? void 0 : result.custom) === null || _c === void 0 ? void 0 : _c.cliPath;
+        cliPath = result?.custom?.cliPath;
         if (Array.isArray(customArgs)) {
             workerCommand = customArgs;
         }
@@ -182,7 +172,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         updateWorker: args.updateWorker,
         args,
     });
-    const res = yield cli.runCli();
+    const res = await cli.runCli();
     if (res.cliExitCode !== 0) {
         args.jobLog(`Running ${cliPath} failed`);
         throw new Error(`Running ${cliPath} failed`);
@@ -195,5 +185,5 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         outputNumber: 1,
         variables: args.variables,
     };
-});
+};
 exports.plugin = plugin;

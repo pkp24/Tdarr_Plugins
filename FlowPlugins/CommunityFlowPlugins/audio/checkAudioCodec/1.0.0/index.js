@@ -124,7 +124,6 @@ const plugin = (args) => {
     let hasCodec = false;
     if (args.inputFileObj.ffProbeData.streams) {
         args.inputFileObj.ffProbeData.streams.forEach((stream, index) => {
-            var _a, _b, _c;
             if (stream.codec_type === 'audio' && stream.codec_name === args.inputs.codec) {
                 if (!checkBitrate) {
                     args.jobLog(`File has codec: ${args.inputs.codec}`);
@@ -137,7 +136,7 @@ const plugin = (args) => {
                             + ` ${ffprobeBitrate} between ${greaterThan} and ${lessThan}`);
                         hasCodec = true;
                     }
-                    const mediaInfoBitrate = Number(((_c = (_b = (_a = args.inputFileObj.mediaInfo) === null || _a === void 0 ? void 0 : _a.track) === null || _b === void 0 ? void 0 : _b[index + 1]) === null || _c === void 0 ? void 0 : _c.BitRate) || 0);
+                    const mediaInfoBitrate = Number(args.inputFileObj.mediaInfo?.track?.[index + 1]?.BitRate || 0);
                     if (mediaInfoBitrate > greaterThan && mediaInfoBitrate < lessThan) {
                         args.jobLog(`File has codec: ${args.inputs.codec} with bitrate`
                             + ` ${mediaInfoBitrate} between ${greaterThan} and ${lessThan}`);

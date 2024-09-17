@@ -146,7 +146,7 @@ const details = () => ({
 exports.details = details;
 const getHighest = (first, second) => {
     // @ts-expect-error channels
-    if ((first === null || first === void 0 ? void 0 : first.channels) > (second === null || second === void 0 ? void 0 : second.channels)) {
+    if (first?.channels > second?.channels) {
         return first;
     }
     return second;
@@ -156,12 +156,9 @@ const attemptMakeStream = ({ args, langTag, streams, audioCodec, audioEncoder, w
     const bitrate = String(args.inputs.bitrate);
     const enableSamplerate = Boolean(args.inputs.enableSamplerate);
     const samplerate = String(args.inputs.samplerate);
-    const langMatch = (stream) => {
-        var _a;
-        return ((langTag === 'und'
-            && (stream.tags === undefined || stream.tags.language === undefined))
-            || (((_a = stream === null || stream === void 0 ? void 0 : stream.tags) === null || _a === void 0 ? void 0 : _a.language) && stream.tags.language.toLowerCase().includes(langTag)));
-    };
+    const langMatch = (stream) => ((langTag === 'und'
+        && (stream.tags === undefined || stream.tags.language === undefined))
+        || (stream?.tags?.language && stream.tags.language.toLowerCase().includes(langTag)));
     // filter streams to only include audio streams with the specified lang tag
     const streamsWithLangTag = streams.filter((stream) => {
         if (stream.codec_type === 'audio'

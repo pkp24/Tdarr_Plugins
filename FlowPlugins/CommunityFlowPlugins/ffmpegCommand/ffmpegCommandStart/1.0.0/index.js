@@ -35,10 +35,16 @@ const plugin = (args) => {
     const ffmpegCommand = {
         init: true,
         inputFiles: [],
-        streams: JSON.parse(JSON.stringify(args.inputFileObj.ffProbeData.streams)).map((stream) => (Object.assign(Object.assign({}, stream), { removed: false, mapArgs: [
+        streams: JSON.parse(JSON.stringify(args.inputFileObj.ffProbeData.streams)).map((stream) => ({
+            ...stream,
+            removed: false,
+            mapArgs: [
                 '-map',
                 `0:${stream.index}`,
-            ], inputArgs: [], outputArgs: [] }))),
+            ],
+            inputArgs: [],
+            outputArgs: [],
+        })),
         container,
         hardwareDecoding: false,
         shouldProcess: false,

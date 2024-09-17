@@ -50,14 +50,13 @@ const details = () => ({
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plugin = (args) => {
-    var _a, _b;
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
     let isWithinRange = false;
     const greaterThanFps = Number(args.inputs.greaterThan);
     const lessThanFps = Number(args.inputs.lessThan);
-    const VideoFrameRate = (_b = (_a = args.inputFileObj) === null || _a === void 0 ? void 0 : _a.meta) === null || _b === void 0 ? void 0 : _b.VideoFrameRate;
+    const VideoFrameRate = args.inputFileObj?.meta?.VideoFrameRate;
     if (VideoFrameRate) {
         if (VideoFrameRate >= greaterThanFps && VideoFrameRate <= lessThanFps) {
             isWithinRange = true;

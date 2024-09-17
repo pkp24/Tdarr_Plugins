@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.plugin = exports.details = void 0;
 const fs_1 = require("fs");
@@ -120,7 +111,7 @@ const details = () => ({
 });
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
+const plugin = async (args) => {
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
@@ -141,7 +132,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     const presetPath = `${args.workDir}/preset.json`;
     if (useJsonPreset) {
         const preset = JSON.parse(presetString);
-        yield fs_1.promises.writeFile(presetPath, JSON.stringify(preset, null, 2));
+        await fs_1.promises.writeFile(presetPath, JSON.stringify(preset, null, 2));
         cliArgs.push('--preset-import-file');
         cliArgs.push(presetPath);
         cliArgs.push('-Z');
@@ -165,7 +156,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         updateWorker: args.updateWorker,
         args,
     });
-    const res = yield cli.runCli();
+    const res = await cli.runCli();
     if (res.cliExitCode !== 0) {
         args.jobLog('Running HandBrake failed');
         throw new Error('Running HandBrake failed');
@@ -178,5 +169,5 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         outputNumber: 1,
         variables: args.variables,
     };
-});
+};
 exports.plugin = plugin;

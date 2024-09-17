@@ -133,8 +133,7 @@ const plugin = (args) => {
     const sortTypes = {
         languages: {
             getValue: (stream) => {
-                var _a;
-                if ((_a = stream === null || stream === void 0 ? void 0 : stream.tags) === null || _a === void 0 ? void 0 : _a.language) {
+                if (stream?.tags?.language) {
                     return stream.tags.language;
                 }
                 return '';
@@ -161,7 +160,7 @@ const plugin = (args) => {
                     2: '2',
                     1: '1',
                 };
-                if ((stream === null || stream === void 0 ? void 0 : stream.channels) && chanMap[stream.channels]) {
+                if (stream?.channels && chanMap[stream.channels]) {
                     return chanMap[stream.channels];
                 }
                 return '';

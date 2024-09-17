@@ -84,11 +84,10 @@ const plugin = (args) => {
     const valuesToRemove = String(args.inputs.valuesToRemove).trim().split(',').map((item) => item.trim());
     const condition = String(args.inputs.condition);
     args.variables.ffmpegCommand.streams.forEach((stream) => {
-        var _a;
         let target = '';
         if (propertyToCheck.includes('.')) {
             const parts = propertyToCheck.split('.');
-            target = (_a = stream[parts[0]]) === null || _a === void 0 ? void 0 : _a[parts[1]];
+            target = stream[parts[0]]?.[parts[1]];
         }
         else {
             target = stream[propertyToCheck];

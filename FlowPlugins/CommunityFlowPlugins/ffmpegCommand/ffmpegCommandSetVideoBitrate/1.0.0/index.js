@@ -122,14 +122,13 @@ const plugin = (args) => {
     const fallbackBitrate = String(args.inputs.fallbackBitrate);
     const bitrate = String(args.inputs.bitrate);
     args.variables.ffmpegCommand.streams.forEach((stream) => {
-        var _a, _b, _c, _d;
         if (stream.codec_type === 'video') {
             const ffType = (0, fileUtils_1.getFfType)(stream.codec_type);
             if (useInputBitrate) {
                 args.jobLog('Attempting to use % of input bitrate as output bitrate');
                 // check if input bitrate is available
                 const mediainfoIndex = stream.index + 1;
-                let inputBitrate = (_d = (_c = (_b = (_a = args === null || args === void 0 ? void 0 : args.inputFileObj) === null || _a === void 0 ? void 0 : _a.mediaInfo) === null || _b === void 0 ? void 0 : _b.track) === null || _c === void 0 ? void 0 : _c[mediainfoIndex]) === null || _d === void 0 ? void 0 : _d.BitRate;
+                let inputBitrate = args?.inputFileObj?.mediaInfo?.track?.[mediainfoIndex]?.BitRate;
                 if (inputBitrate) {
                     args.jobLog(`Found input bitrate: ${inputBitrate}`);
                     // @ts-expect-error type

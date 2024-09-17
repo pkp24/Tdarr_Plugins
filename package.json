@@ -24,7 +24,8 @@
     "test": "node ./tests/runTests.js",
     "lint": "eslint_d FlowPluginsTs Community methods examples tests --ext js,ts",
     "lint:fix": "eslint_d FlowPluginsTs Community methods examples tests --ext js,ts --fix",
-    "checkPlugins": "node ./tests/checkPlugins.js"
+    "checkPlugins": "node ./tests/checkPlugins.js",
+    "build-and-copy": "tsc && xcopy /E /I /Y \"C:\\Users\\pkp24\\Documents\\GitHub\\Tdarr_Plugins\\FlowPlugins\\LocalFlowPlugins\\*\" \"Y:\\tdarr\\server\\Tdarr\\Plugins\\FlowPlugins\\LocalFlowPlugins\\\" && xcopy /E /I /Y \"C:\\Users\\pkp24\\Documents\\GitHub\\Tdarr_Plugins\\FlowPlugins\\LocalFlowPlugins\\*\" \"C:\\Users\\pkp24\\Documents\\Tdarr\\Tdarr_Node\\assets\\app\\plugins\\FlowPlugins\\LocalFlowPlugins\\\""
   },
   "repository": {
     "type": "git",

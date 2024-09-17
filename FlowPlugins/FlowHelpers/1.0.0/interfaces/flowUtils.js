@@ -3,8 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkFfmpegCommandInit = void 0;
 // eslint-disable-next-line import/prefer-default-export
 const checkFfmpegCommandInit = (args) => {
-    var _a, _b;
-    if (!((_b = (_a = args === null || args === void 0 ? void 0 : args.variables) === null || _a === void 0 ? void 0 : _a.ffmpegCommand) === null || _b === void 0 ? void 0 : _b.init)) {
+    if (!args?.variables?.ffmpegCommand?.init) {
         throw new Error('FFmpeg command plugins not used correctly.'
             + ' Please use the "Begin Command" plugin before using this plugin.'
             + ' Afterwards, use the "Execute" plugin to execute the built FFmpeg command.'

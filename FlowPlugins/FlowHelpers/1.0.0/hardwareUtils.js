@@ -1,20 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEncoder = exports.getBestNvencDevice = exports.hasEncoder = void 0;
 const os_1 = __importDefault(require("os"));
-const hasEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ffmpegPath, encoder, inputArgs, outputArgs, filter, args, }) {
+const hasEncoder = async ({ ffmpegPath, encoder, inputArgs, outputArgs, filter, args, }) => {
     const { spawn } = require('child_process');
     let isEnabled = false;
     try {
@@ -34,7 +25,7 @@ const hasEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ffmpegPa
         ];
         args.jobLog(`Checking for encoder ${encoder} with command:`);
         args.jobLog(`${ffmpegPath} ${commandArr.join(' ')}`);
-        isEnabled = yield new Promise((resolve) => {
+        isEnabled = await new Promise((resolve) => {
             const error = () => {
                 resolve(false);
             };
@@ -74,7 +65,7 @@ const hasEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ffmpegPa
         console.log(err);
     }
     return isEnabled;
-});
+};
 exports.hasEncoder = hasEncoder;
 // credit to UNCode101 for this
 const getBestNvencDevice = ({ args, nvencDevice, }) => {
@@ -146,7 +137,7 @@ const encoderFilter = (encoder, targetCodec) => {
     }
     return false;
 };
-const getEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ targetCodec, hardwareEncoding, hardwareType, args, }) {
+const getEncoder = async ({ targetCodec, hardwareEncoding, hardwareType, args, }) => {
     const supportedGpuEncoders = ['hevc', 'h264', 'av1'];
     if (args.workerType
         && args.workerType.includes('gpu')
@@ -279,13 +270,17 @@ const getEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ targetCo
             if (idx === -1) {
                 throw new Error(`Could not find encoder ${targetCodec} for hardware ${hardwareType}`);
             }
-            return Object.assign(Object.assign({}, filteredGpuEncoders[idx]), { isGpu: true, enabledDevices: [] });
+            return {
+                ...filteredGpuEncoders[idx],
+                isGpu: true,
+                enabledDevices: [],
+            };
         }
         args.jobLog(JSON.stringify({ filteredGpuEncoders }));
         // eslint-disable-next-line no-restricted-syntax
         for (const gpuEncoder of filteredGpuEncoders) {
             // eslint-disable-next-line no-await-in-loop
-            gpuEncoder.enabled = yield (0, exports.hasEncoder)({
+            gpuEncoder.enabled = await (0, exports.hasEncoder)({
                 ffmpegPath: args.ffmpegPath,
                 encoder: gpuEncoder.encoder,
                 inputArgs: gpuEncoder.inputArgs,
@@ -302,7 +297,11 @@ const getEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ targetCo
                     args,
                     nvencDevice: enabledDevices[0],
                 });
-                return Object.assign(Object.assign({}, res), { isGpu: true, enabledDevices });
+                return {
+                    ...res,
+                    isGpu: true,
+                    enabledDevices,
+                };
             }
             return {
                 encoder: enabledDevices[0].encoder,
@@ -358,5 +357,5 @@ const getEncoder = (_a) => __awaiter(void 0, [_a], void 0, function* ({ targetCo
         isGpu: false,
         enabledDevices: [],
     };
-});
+};
 exports.getEncoder = getEncoder;

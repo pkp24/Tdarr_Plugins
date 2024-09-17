@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -78,12 +69,11 @@ const details = () => ({
     ],
 });
 exports.details = details;
-const getFileInfoFromLookup = (args, arrApp, fileName) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+const getFileInfoFromLookup = async (args, arrApp, fileName) => {
     let fInfo = { id: '-1' };
-    const imdbId = (_b = (_a = /\b(tt|nm|co|ev|ch|ni)\d{7,10}?\b/i.exec(fileName)) === null || _a === void 0 ? void 0 : _a.at(0)) !== null && _b !== void 0 ? _b : '';
+    const imdbId = /\b(tt|nm|co|ev|ch|ni)\d{7,10}?\b/i.exec(fileName)?.at(0) ?? '';
     if (imdbId !== '') {
-        const lookupResponse = yield args.deps.axios({
+        const lookupResponse = await args.deps.axios({
             method: 'get',
             url: `${arrApp.host}/api/v3/${arrApp.name === 'radarr' ? 'movie' : 'series'}/lookup?term=imdb:${imdbId}`,
             headers: arrApp.headers,
@@ -93,10 +83,10 @@ const getFileInfoFromLookup = (args, arrApp, fileName) => __awaiter(void 0, void
             + ` for imdb '${imdbId}'`);
     }
     return fInfo;
-});
-const getFileInfoFromParse = (args, arrApp, fileName) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const getFileInfoFromParse = async (args, arrApp, fileName) => {
     let fInfo = { id: '-1' };
-    const parseResponse = yield args.deps.axios({
+    const parseResponse = await args.deps.axios({
         method: 'get',
         url: `${arrApp.host}/api/v3/parse?title=${encodeURIComponent((0, fileUtils_1.getFileName)(fileName))}`,
         headers: arrApp.headers,
@@ -105,15 +95,14 @@ const getFileInfoFromParse = (args, arrApp, fileName) => __awaiter(void 0, void 
     args.jobLog(`${arrApp.content} ${fInfo.id !== '-1' ? `'${fInfo.id}' found` : 'not found'}`
         + ` for '${(0, fileUtils_1.getFileName)(fileName)}'`);
     return fInfo;
-});
-const getFileInfo = (args, arrApp, fileName) => __awaiter(void 0, void 0, void 0, function* () {
-    const fInfo = yield getFileInfoFromLookup(args, arrApp, fileName);
+};
+const getFileInfo = async (args, arrApp, fileName) => {
+    const fInfo = await getFileInfoFromLookup(args, arrApp, fileName);
     return (fInfo.id === '-1' || (arrApp.name === 'sonarr' && (fInfo.seasonNumber === -1 || fInfo.episodeNumber === -1)))
         ? getFileInfoFromParse(args, arrApp, fileName)
         : fInfo;
-});
-const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+};
+const plugin = async (args) => {
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
@@ -122,8 +111,8 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     const arr = String(args.inputs.arr);
     const arr_host = String(args.inputs.arr_host).trim();
     const arrHost = arr_host.endsWith('/') ? arr_host.slice(0, -1) : arr_host;
-    const originalFileName = (_b = (_a = args.originalLibraryFile) === null || _a === void 0 ? void 0 : _a._id) !== null && _b !== void 0 ? _b : '';
-    const currentFileName = (_d = (_c = args.inputFileObj) === null || _c === void 0 ? void 0 : _c._id) !== null && _d !== void 0 ? _d : '';
+    const originalFileName = args.originalLibraryFile?._id ?? '';
+    const currentFileName = args.inputFileObj?._id ?? '';
     const headers = {
         'Content-Type': 'application/json',
         'X-Api-Key': String(args.inputs.arr_api_key),
@@ -136,10 +125,10 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
             headers,
             content: 'Movie',
             delegates: {
-                getFileInfoFromLookupResponse: (lookupResponse) => { var _a, _b, _c; return ({ id: String((_c = (_b = (_a = lookupResponse === null || lookupResponse === void 0 ? void 0 : lookupResponse.data) === null || _a === void 0 ? void 0 : _a.at(0)) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : -1) }); },
-                getFileInfoFromParseResponse: (parseResponse) => { var _a, _b, _c; return ({ id: String((_c = (_b = (_a = parseResponse === null || parseResponse === void 0 ? void 0 : parseResponse.data) === null || _a === void 0 ? void 0 : _a.movie) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : -1) }); },
+                getFileInfoFromLookupResponse: (lookupResponse) => ({ id: String(lookupResponse?.data?.at(0)?.id ?? -1) }),
+                getFileInfoFromParseResponse: (parseResponse) => ({ id: String(parseResponse?.data?.movie?.id ?? -1) }),
                 buildPreviewRenameResquestUrl: (fInfo) => `${arrHost}/api/v3/rename?movieId=${fInfo.id}`,
-                getFileToRenameFromPreviewRenameResponse: (previewRenameResponse) => { var _a; return (_a = previewRenameResponse.data) === null || _a === void 0 ? void 0 : _a.at(0); },
+                getFileToRenameFromPreviewRenameResponse: (previewRenameResponse) => previewRenameResponse.data?.at(0),
             },
         }
         : {
@@ -149,44 +138,39 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
             content: 'Serie',
             delegates: {
                 getFileInfoFromLookupResponse: (lookupResponse, fileName) => {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-                    const fInfo = { id: String((_c = (_b = (_a = lookupResponse === null || lookupResponse === void 0 ? void 0 : lookupResponse.data) === null || _a === void 0 ? void 0 : _a.at(0)) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : -1) };
+                    const fInfo = { id: String(lookupResponse?.data?.at(0)?.id ?? -1) };
                     if (fInfo.id !== '-1') {
-                        const seasonEpisodenumber = (_e = (_d = /\bS\d{1,3}E\d{1,4}\b/i.exec(fileName)) === null || _d === void 0 ? void 0 : _d.at(0)) !== null && _e !== void 0 ? _e : '';
-                        const episodeNumber = (_g = (_f = /\d{1,4}$/i.exec(seasonEpisodenumber)) === null || _f === void 0 ? void 0 : _f.at(0)) !== null && _g !== void 0 ? _g : '';
-                        fInfo.seasonNumber = Number((_j = (_h = /\d{1,3}/i
-                            .exec(seasonEpisodenumber.slice(0, -episodeNumber.length))) === null || _h === void 0 ? void 0 : _h.at(0)) !== null && _j !== void 0 ? _j : '-1');
+                        const seasonEpisodenumber = /\bS\d{1,3}E\d{1,4}\b/i.exec(fileName)?.at(0) ?? '';
+                        const episodeNumber = /\d{1,4}$/i.exec(seasonEpisodenumber)?.at(0) ?? '';
+                        fInfo.seasonNumber = Number(/\d{1,3}/i
+                            .exec(seasonEpisodenumber.slice(0, -episodeNumber.length))
+                            ?.at(0) ?? '-1');
                         fInfo.episodeNumber = Number(episodeNumber !== '' ? episodeNumber : -1);
                     }
                     return fInfo;
                 },
-                getFileInfoFromParseResponse: (parseResponse) => {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                    return ({
-                        id: String((_c = (_b = (_a = parseResponse === null || parseResponse === void 0 ? void 0 : parseResponse.data) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : -1),
-                        seasonNumber: (_f = (_e = (_d = parseResponse === null || parseResponse === void 0 ? void 0 : parseResponse.data) === null || _d === void 0 ? void 0 : _d.parsedEpisodeInfo) === null || _e === void 0 ? void 0 : _e.seasonNumber) !== null && _f !== void 0 ? _f : 1,
-                        episodeNumber: (_k = (_j = (_h = (_g = parseResponse === null || parseResponse === void 0 ? void 0 : parseResponse.data) === null || _g === void 0 ? void 0 : _g.parsedEpisodeInfo) === null || _h === void 0 ? void 0 : _h.episodeNumbers) === null || _j === void 0 ? void 0 : _j.at(0)) !== null && _k !== void 0 ? _k : 1,
-                    });
-                },
+                getFileInfoFromParseResponse: (parseResponse) => ({
+                    id: String(parseResponse?.data?.series?.id ?? -1),
+                    seasonNumber: parseResponse?.data?.parsedEpisodeInfo?.seasonNumber ?? 1,
+                    episodeNumber: parseResponse?.data?.parsedEpisodeInfo?.episodeNumbers?.at(0) ?? 1,
+                }),
                 buildPreviewRenameResquestUrl: (fInfo) => `${arrHost}/api/v3/rename?seriesId=${fInfo.id}&seasonNumber=${fInfo.seasonNumber}`,
-                getFileToRenameFromPreviewRenameResponse: (previewRenameResponse, fInfo) => {
-                    var _a;
-                    return (_a = previewRenameResponse.data) === null || _a === void 0 ? void 0 : _a.find((episodeFile) => { var _a; return ((_a = episodeFile.episodeNumbers) === null || _a === void 0 ? void 0 : _a.at(0)) === fInfo.episodeNumber; });
-                },
+                getFileToRenameFromPreviewRenameResponse: (previewRenameResponse, fInfo) => previewRenameResponse.data
+                    ?.find((episodeFile) => episodeFile.episodeNumbers?.at(0) === fInfo.episodeNumber),
             },
         };
     args.jobLog('Going to apply new name');
     args.jobLog(`Renaming ${arrApp.name}...`);
     // Retrieving movie or serie id, plus season and episode number for serie
-    let fInfo = yield getFileInfo(args, arrApp, originalFileName);
+    let fInfo = await getFileInfo(args, arrApp, originalFileName);
     // Useful in some edge cases
     if (fInfo.id === '-1' && currentFileName !== originalFileName) {
-        fInfo = yield getFileInfo(args, arrApp, currentFileName);
+        fInfo = await getFileInfo(args, arrApp, currentFileName);
     }
     // Checking that the file has been found
     if (fInfo.id !== '-1') {
         // Using rename endpoint to get ids of all the files that need renaming
-        const previewRenameRequestResult = yield args.deps.axios({
+        const previewRenameRequestResult = await args.deps.axios({
             method: 'get',
             url: arrApp.delegates.buildPreviewRenameResquestUrl(fInfo),
             headers,
@@ -196,7 +180,7 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
         // Only if there is a rename to execute
         if (fileToRename !== undefined) {
             newPath = `${(0, fileUtils_1.getFileAbosluteDir)(currentFileName)}/${(0, fileUtils_1.getFileName)(fileToRename.newPath)}.${(0, fileUtils_1.getContainer)(fileToRename.newPath)}`;
-            isSuccessful = yield (0, fileMoveOrCopy_1.default)({
+            isSuccessful = await (0, fileMoveOrCopy_1.default)({
                 operation: 'move',
                 sourcePath: currentFileName,
                 destinationPath: newPath,
@@ -210,9 +194,10 @@ const plugin = (args) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return {
         outputFileObj: isSuccessful && newPath !== ''
-            ? Object.assign(Object.assign({}, args.inputFileObj), { _id: newPath }) : args.inputFileObj,
+            ? { ...args.inputFileObj, _id: newPath }
+            : args.inputFileObj,
         outputNumber: isSuccessful ? 1 : 2,
         variables: args.variables,
     };
-});
+};
 exports.plugin = plugin;

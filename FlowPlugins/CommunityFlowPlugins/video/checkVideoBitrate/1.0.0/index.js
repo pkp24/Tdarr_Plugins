@@ -65,7 +65,6 @@ const details = () => ({
 exports.details = details;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plugin = (args) => {
-    var _a, _b;
     const lib = require('../../../../../methods/lib')();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-param-reassign
     args.inputs = lib.loadDefaultValues(args.inputs, details);
@@ -81,7 +80,7 @@ const plugin = (args) => {
         lessThanBits *= 1000000;
     }
     let hasVideoBitrate = false;
-    if ((_b = (_a = args.inputFileObj) === null || _a === void 0 ? void 0 : _a.mediaInfo) === null || _b === void 0 ? void 0 : _b.track) {
+    if (args.inputFileObj?.mediaInfo?.track) {
         args.inputFileObj.mediaInfo.track.forEach((stream) => {
             if (stream['@type'].toLowerCase() === 'video') {
                 if (stream.BitRate) {
